@@ -1,8 +1,0 @@
-{% extends "calisphere/itemView.html,calisphere/pjaxTemplates/pjax-item.html"|pjax:request %}
-
-{% block title %}: {{ item.title.0 }}{% endblock %}
-{% block page-metadata %}
-{% include "calisphere/microdata.html" with title=item.title.0 description=item.description %}
-{% endblock %}
-
-{% block itemContent %}{% include "calisphere/item.html" %}{% endblock %}

@@ -1,9 +1,0 @@
-{{ body }}
-
-Name: {{ name }}
-
-Email: {{ email }}
-
-Email2: {{ email2 }}
-
-URL_Refer: {{ referer }}

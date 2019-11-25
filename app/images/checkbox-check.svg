@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">
-<svg version="1.1" baseProfile="tiny" xmlns="http://www.w3.org/2000/svg" width="18px" height="12px">
-
-  <polyline points="1,5 5,10 17,1"
-  style="fill:none; stroke:rgb(255, 110, 27); stroke-width:3; stroke-linecap:butt" />
-
-</svg>
