@@ -5,7 +5,7 @@
   {% block page-metadata %}
     {% include "calisphere/microdata.html" with title=essay.title description="Calisphere supports classroom activities and research efforts for students from elementary school through higher education. Essays explore the history of California and the state's evolving diversity." meta_image=essay.social_media_card %}
   {% endblock %}
-{% else %}
+{% endif %}
 
 {% block content %}
   <nav role="navigation">
