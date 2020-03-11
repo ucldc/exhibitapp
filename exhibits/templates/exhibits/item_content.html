@@ -122,7 +122,7 @@
   {% else %}
     <div class="exhibit__modal-content">
       <div class="obj-container__simple-{% if exhibitItem.custom_crop %}image{% else %}tile{% endif %}">
-        {% if item.custom_link %}
+        {% if exhibitItem.custom_link %}
           <a class="obj__link" href="{{ exhibitItem.custom_link }}">
         {% else %}
           <a class="obj__link" href="http://content.cdlib.org/{{ exhibitItem.item_id }}">
