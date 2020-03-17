@@ -223,7 +223,7 @@ class Exhibit(models.Model):
                         acl=settings.S3_STASH_ACL
                     else:
                         acl=None
-                    report = md5s3stash("file://" + url, settings.S3_STASH, acl)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, acl=acl)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -298,7 +298,7 @@ class HistoricalEssay(models.Model):
                         acl=settings.S3_STASH_ACL
                     else:
                         acl=None
-                    report = md5s3stash("file://" + url, settings.S3_STASH, acl)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, acl=acl)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -422,7 +422,7 @@ class LessonPlan(models.Model):
                         acl=settings.S3_STASH_ACL
                     else:
                         acl=None
-                    report = md5s3stash("file://" + url, settings.S3_STASH, acl)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, acl=acl)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -523,7 +523,7 @@ class Theme(models.Model):
                         acl=settings.S3_STASH_ACL
                     else:
                         acl=None
-                    report = md5s3stash("file://" + url, settings.S3_STASH, acl)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, acl=acl)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -630,7 +630,7 @@ class ExhibitItem(models.Model):
                         acl=settings.S3_STASH_ACL
                     else:
                         acl=None
-                    report = md5s3stash("file://" + url, settings.S3_STASH, acl)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, acl=acl)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
