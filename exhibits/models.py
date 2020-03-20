@@ -10,7 +10,6 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from exhibits.custom_fields import HeroField
 from past import autotranslate
-autotranslate(['md5s3stash'])
 from md5s3stash import md5s3stash
 
 try:
@@ -219,7 +218,7 @@ class Exhibit(models.Model):
                 url = settings.MEDIA_ROOT + "/" + name
                 if os.path.isfile(url):
                     field_instance = getattr(self, s3field)
-                    report = md5s3stash("file://" + url, settings.S3_STASH)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, settings.S3_ID)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -290,7 +289,7 @@ class HistoricalEssay(models.Model):
                 url = settings.MEDIA_ROOT + "/" + name
                 if os.path.isfile(url):
                     field_instance = getattr(self, s3field)
-                    report = md5s3stash("file://" + url, settings.S3_STASH)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, settings.S3_ID)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -410,7 +409,7 @@ class LessonPlan(models.Model):
                 url = settings.MEDIA_ROOT + "/" + name
                 if os.path.isfile(url):
                     field_instance = getattr(self, s3field)
-                    report = md5s3stash("file://" + url, settings.S3_STASH)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, settings.S3_ID)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -507,7 +506,7 @@ class Theme(models.Model):
                 url = settings.MEDIA_ROOT + "/" + name
                 if os.path.isfile(url):
                     field_instance = getattr(self, s3field)
-                    report = md5s3stash("file://" + url, settings.S3_STASH)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, settings.S3_ID)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to
@@ -610,7 +609,7 @@ class ExhibitItem(models.Model):
                 url = settings.MEDIA_ROOT + "/" + name
                 if os.path.isfile(url):
                     field_instance = getattr(self, s3field)
-                    report = md5s3stash("file://" + url, settings.S3_STASH)
+                    report = md5s3stash("file://" + url, settings.S3_STASH, settings.S3_ID)
                     field_instance.storage.delete(name)
                     field_instance.name = report.md5
                     upload_to = self._meta.get_field(s3field).upload_to

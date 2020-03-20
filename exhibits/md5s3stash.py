@@ -12,14 +12,14 @@ from PIL import Image
 from collections import namedtuple
 
 
-def md5s3stash(file_path, bucket_base):
+def md5s3stash(file_path, bucket_base, full_control):
     """ stash a file at `file_path` in the named `bucket_base` """
     StashReport = namedtuple(
         'StashReport', 'url, md5, s3_url, mime_type, dimensions')
     md5 = hashChunks(file_path)
     s3_url = "s3://{0}/{1}".format(bucket_base,md5)
     (mime, dimensions) = image_info(file_path)
-    s3move(file_path, s3_url, mime)
+    s3move(file_path, s3_url, mime, full_control)
     report = StashReport(file_path, md5, s3_url, mime, dimensions)
     logging.getLogger('MD5S3:stash').info(report)
     return report
@@ -49,7 +49,7 @@ def hashChunks(file_path):
     return md5
 
 
-def s3move(file_path, s3_url, mime):
+def s3move(file_path, s3_url, mime, full_control):
     s3 = boto3.client('s3')
     l = logging.getLogger('MD5S3:s3move')
     l.debug({
@@ -67,7 +67,7 @@ def s3move(file_path, s3_url, mime):
         s3.upload_file(file_path, parts.netloc, parts.path[1:], 
             ExtraArgs={
                 'GrantRead': public_read, 
-                'GrantFullControl': settings.S3_ID, 
+                'GrantFullControl': full_control, 
                 'ContentType': mime
             })
         l.debug('file sent to s3')
