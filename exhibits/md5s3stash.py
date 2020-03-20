@@ -35,7 +35,7 @@ def hashChunks(file_path):
     hasher = hashlib.new('md5')
     BLOCKSIZE = 1024 * hasher.block_size
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, 'rb') as file:
             while True:
                 chunk = file.read(BLOCKSIZE)
                 hasher.update(chunk)
