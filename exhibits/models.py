@@ -9,8 +9,7 @@ from django.urls import reverse
 from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from exhibits.custom_fields import HeroField
-from past import autotranslate
-from md5s3stash import md5s3stash
+from exhibits.md5s3stash import md5s3stash
 
 try:
     from calisphere.cache_retry import SOLR_select
