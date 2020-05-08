@@ -29,7 +29,7 @@
       </li>
       {% if relatedExhibitsByTheme|length > 0 %}
         <li>
-          <a href="{{ relatedExhibitsByTheme.0.0.get_absolute_url }}" aria-level="1" data-pjax="js-pageContent">
+          <a href="{{ relatedExhibitsByTheme.0.0.get_absolute_url }}" data-pjax="js-pageContent">
             {{ relatedExhibitsByTheme.0.0 }}
           </a>
         </li>
