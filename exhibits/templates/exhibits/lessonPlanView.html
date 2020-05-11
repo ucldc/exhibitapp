@@ -22,10 +22,10 @@
     </div>
   </div>
 
-  <nav role="navigation">
-    <ol id="global__breadcrumb">
+  <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
+    <ul>
       <li><a href="{% url 'for-teachers:lessonPlanDirectory' %}" data-pjax="js-pageContent">For Educators</a></li>
-    </ol>
+    </ul>
   </nav>
   
   <h1 class="lessonplan__header" id="js-exhibit-title" data-slug="{{ lessonPlan.slug }}">Lesson Plan: {{ lessonPlan.title }}</h1>

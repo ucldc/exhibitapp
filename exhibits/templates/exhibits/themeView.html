@@ -8,10 +8,10 @@
 {% endif %}
 
 {% block content %}
-  <nav role="navigation">
-    <ol id="global__breadcrumb" aria-labelledby="global__breadcrumb-label">
+  <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
+    <ul>
       <li><a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a></li>
-    </ol>
+    </ul>
   </nav>
   <div class="theme__hero" style="background-image: url('{{ thumbnailUrl }}clip/1400x280/{{ theme.hero }}')">
     <h1 class="theme__header" id="js-exhibit-title" style="background-color: {{ theme.color }}">{{ theme.title }}</h1>

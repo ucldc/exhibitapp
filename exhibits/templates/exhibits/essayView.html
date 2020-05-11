@@ -8,10 +8,10 @@
 {% endif %}
 
 {% block content %}
-  <nav role="navigation">
-    <ol id="global__breadcrumb">
+  <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
+    <ul>
       <li><a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a></li>
-    </ol>
+    </ul>
   </nav>
   
   <h1 id="js-exhibit-title" data-slug="{{ essay.slug }}">Essay: {{ essay.title }}</h1>
