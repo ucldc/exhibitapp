@@ -60,6 +60,10 @@
         {% if exhibitItem.essay %}
           {% include "exhibits/render_as.html" with render_as=exhibitItem.render_as text=exhibitItem.essay truncate=False container_class="" %}
         {% endif %}
+        {% if exhibitItem.citations %}
+          References:
+          {% include "exhibits/render_as.html" with render_as=exhibitItem.citations_render_as text=exhibitItem.citations truncate=False container_class="" %}
+        {% endif %}        
       </div>
       <div class="exhibit__modal-metadata">
         <div class="exhibit-item__count">{{ item_count }} of {{ total_count }} in exhibition</div>
