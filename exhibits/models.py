@@ -128,6 +128,9 @@ class Exhibit(models.Model):
     copyright_holder = models.TextField()
     overview = models.TextField(verbose_name='Exhibit Overview', blank=True)
     render_as = models.CharField(max_length=1, choices=RENDERING_OPTIONS, default='H')
+    citations = models.TextField(blank=True, verbose_name="Citations/References")
+    citations_render_as = models.CharField(max_length=1, choices=RENDERING_OPTIONS, default='H', verbose_name="Render citations as")
+
     publish = models.BooleanField(verbose_name='Ready for publication?', default=False)
     color = models.CharField(max_length=20, blank=True)
     scraped_from = models.CharField(max_length=250, blank=True)
@@ -557,6 +560,9 @@ class ExhibitItem(models.Model):
     metadata_render_as = models.CharField(max_length=1, choices=RENDERING_OPTIONS, default='M')
     custom_link = models.CharField(max_length=512, blank=True)
     custom_title = models.CharField(max_length=512, blank=True)
+
+    citations = models.TextField(blank=True, verbose_name="Citations/References")
+    citations_render_as = models.CharField(max_length=1, choices=RENDERING_OPTIONS, default='H', verbose_name="Render citations as")
 
     #lat/long models
     lat = models.FloatField(default=37.8086906)
