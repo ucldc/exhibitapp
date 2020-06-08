@@ -61,7 +61,7 @@
           {% include "exhibits/render_as.html" with render_as=exhibitItem.render_as text=exhibitItem.essay truncate=False container_class="" %}
         {% endif %}
         {% if exhibitItem.citations %}
-          References:
+          <strong>References:</strong>
           {% include "exhibits/render_as.html" with render_as=exhibitItem.citations_render_as text=exhibitItem.citations truncate=False container_class="" %}
         {% endif %}        
       </div>
