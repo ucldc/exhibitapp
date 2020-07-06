@@ -93,6 +93,15 @@
     </p>
     </div>
   </div>
+  {% if exhibit.citations %}
+  <hr style="margin:0">
+  <div class="row no-gutters">
+    <div class="col">
+      <h2>References:</h2>
+      {% include "exhibits/render_as.html" with render_as=exhibit.citations_render_as text=exhibit.citations truncate=False %}
+    </div>
+  </div>
+  {% endif %}
 
   {% if relatedExhibitsByTheme|length > 0 or exhibit.published_essays.all|length > 0 or exhibit.published_lessons.all|length > 0 %}
   <div class="exhibit__related-materials">

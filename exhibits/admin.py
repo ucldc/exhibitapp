@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from django import forms
 from django.db import models
+from django.urls import reverse
 
 # Register your models here.
 
@@ -13,12 +14,19 @@ from .models import *
 class ExhibitItemInline(admin.TabularInline):
     model = ExhibitItem
     classes = ('collapse',)
-    fields = ['order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as']
+    fields = ['order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'citations', 'citations_render_as', 'link_to_exhibit_item']
+    # 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
     extra = 0
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'cols': 50, 'rows': 5})}
     }
-    readonly_fields = ['imgUrl', 'img_display']
+    readonly_fields = ['img_display', 'link_to_exhibit_item']
+
+    def link_to_exhibit_item(self, instance):
+        link = reverse("admin:exhibits_exhibititem_change", args=[instance.id])
+        return mark_safe(f"<a href='{link}'>Click to add custom crop, link, title, and metadata</a>")
+    link_to_exhibit_item.short_description="Link to Exhibit Item"
+
     def img_display(self, instance):
         if instance.imgUrl():
             return mark_safe("<img src='" + instance.imgUrl() + "'/>")
@@ -29,12 +37,19 @@ class ExhibitItemInline(admin.TabularInline):
 class LessonPlanItemInline(admin.TabularInline):
     model = ExhibitItem
     classes = ('collapse',)
-    fields = ['lesson_plan_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as']
+    fields = ['lesson_plan_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'citations', 'citations_render_as', 'link_to_exhibit_item']
+    # 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
     extra = 0
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'cols': 50, 'rows': 5})}
     }
-    readonly_fields = ['imgUrl', 'img_display']
+    readonly_fields = ['imgUrl', 'img_display', 'link_to_exhibit_item']
+
+    def link_to_exhibit_item(self, instance):
+        link = reverse("admin:exhibits_exhibititem_change", args=[instance.id])
+        return mark_safe(f"<a href='{link}'>Click to add custom crop, link, title, and metadata</a>")
+    link_to_exhibit_item.short_description="Link to Lesson Plan Item"
+
     def img_display(self, instance):
         if instance.imgUrl():
             return mark_safe("<img src='" + instance.imgUrl() + "'/>")
@@ -45,12 +60,19 @@ class LessonPlanItemInline(admin.TabularInline):
 class HistoricalEssayItemInline(admin.TabularInline):
     model = ExhibitItem
     classes = ('collapse',)
-    fields = ['historical_essay_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as']
+    fields = ['historical_essay_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'citations', 'citations_render_as', 'link_to_exhibit_item']
+    # 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
     extra = 0
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'cols': 50, 'rows': 5})}
     }
-    readonly_fields = ['imgUrl', 'img_display']
+    readonly_fields = ['imgUrl', 'img_display', 'link_to_exhibit_item']
+
+    def link_to_exhibit_item(self, instance):
+        link = reverse("admin:exhibits_exhibititem_change", args=[instance.id])
+        return mark_safe(f"<a href='{link}'>Click to add custom crop, link, title, and metadata</a>")
+    link_to_exhibit_item.short_description="Link to Historical Essay Item"
+
     def img_display(self, instance):
         if instance.imgUrl():
             return mark_safe("<img src='" + instance.imgUrl() + "'/>")
@@ -139,6 +161,7 @@ class ExhibitAdmin(admin.ModelAdmin):
         ('Publish',                 {'fields': [('color', 'publish'), ('scraped_from')], 'classes': ['collapse']}),
         ('Exhibit Overview',        {'fields': [('overview', 'render_as')], 'classes': ['collapse']}),
         ('About this Exhibit',      {'fields': [('byline', 'byline_render_as'), ('curator', 'copyright_holder'), ('copyright_year', 'credits_display')]}),
+        ('Citations/References',    {'fields': [('citations', 'citations_render_as')]}),
         ('Metadata',                {'fields': [('meta_description', 'meta_keywords')], 'classes': ['collapse']})
     ]
     inlines = [ExhibitItemInline, NotesItemInline, ThemeExhibitInline, HistoricalEssayExhibitInline, LessonPlanExhibitInline]
@@ -223,7 +246,74 @@ class ThemeAdmin(admin.ModelAdmin):
 
 class ExhibitItemAdmin(admin.ModelAdmin):
     list_display = ('item_id', 'exhibit', 'order', 'lesson_plan', 'lesson_plan_order', 'historical_essay', 'historical_essay_order')
+    fieldsets = [
+        (None,                      {'fields': [('item_id', 'publish'), ('img_display'), ('container_type', 'container'), ('container_order')]}),
+        ('Exhibit Context',         {'fields': [('essay', 'render_as')], 'classes': ['collapse']}),
+        ('Citations',               {'fields': [('citations', 'citations_render_as')], 'classes': ['collapse']}),
+        ('Custom Data',             {'fields': [('custom_title'), ('custom_crop'), ('custom_metadata', 'metadata_render_as'), ('custom_link')]}),
+        ('Migrated Data',           {'fields': [('lat', 'lon'), ('place', 'exact')], 'classes': ['collapse']}),
+        (None,                      {'fields': [('return_to_container')]})
+    ]
 
+    readonly_fields = ['container_type', 'container', 'container_order', 'img_display', 'return_to_container']
+
+    def img_display(self, instance):
+        if instance.imgUrl():
+            return mark_safe("<img src='" + instance.imgUrl() + "'/>")
+        else:
+            return None
+    img_display.short_description = "Thumbnail"
+
+    def container_type(self, instance):
+        if instance.exhibit:
+            return "Exhibit"
+        elif instance.historical_essay:
+            return "Historical Essay"
+        elif instance.lesson_plan:
+            return "Lesson Plan"
+        else:
+            return "Orphaned"
+    container_type.short_description = 'Part of'
+
+    def container(self, instance):
+        if instance.exhibit:
+            link = reverse("admin:exhibits_exhibit_change", args=[instance.exhibit.id])
+            return mark_safe(f"{instance.exhibit} <br/><a href='{link}'>Edit this exhibit</a>")
+        elif instance.historical_essay:
+            link = reverse("admin:exhibits_historicalessay_change", args=[instance.historical_essay.id])
+            return mark_safe(f"<b>Historical Essay</b>: {instance.historical_essay} <br/><a href='{link}'>Edit this historical essay</a>")
+        elif instance.lesson_plan:
+            link = reverse("admin:exhibits_lessonplan_change", args=[instance.lesson_plan.id])
+            return mark_safe(f"<b>Lesson Plan</b>: {instance.lesson_plan}<br/><a href='{link}'>Edit this lesson plan</a>")
+        else:
+            return 'Orphaned exhibit item'
+    container.short_description=''
+
+    def container_order(self, instance):
+        if instance.exhibit:
+            return instance.order
+        elif instance.historical_essay:
+            return instance.historical_essay_order
+        elif instance.lesson_plan:
+            return instance.lesson_plan_order
+        else:
+            return ''
+    container_order.short_description='Order'
+
+    def return_to_container(self, instance):
+        link = ''
+        container_name = ''
+        if instance.exhibit:
+            link = reverse("admin:exhibits_exhibit_change", args=[instance.exhibit.id])
+            container_name = instance.exhibit
+        elif instance.historical_essay:
+            link = reverse("admin:exhibits_historicalessay_change", args=[instance.historical_essay.id])
+            container_name = instance.historical_essay
+        elif instance.lesson_plan:
+            link = reverse("admin:exhibits_lessonplan_change", args=[instance.lesson_plan.id])
+            container_name = instance.lesson_plan
+        return mark_safe(f"Please click 'save and continue editing' below and then click here to return to <a href='{link}'>Edit {container_name}</a>")
+    return_to_container.short_description='Help text'
 
 admin.site.register(ExhibitItem, ExhibitItemAdmin)
 admin.site.register(Exhibit, ExhibitAdmin)
