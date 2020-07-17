@@ -22,8 +22,8 @@
     </div>
   </div>
 
-  <nav role="navigation">
-    <ol id="global__breadcrumb">
+  <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
+    <ul>
       <li>
         <a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a>
       </li>
@@ -34,10 +34,10 @@
           </a>
         </li>
       {% endif %}
-    </ol>
+    </ul>
   </nav>
   
-  <h1 class="global__breadcrumb-header" id="js-exhibit-title" data-slug="{{ exhibit.slug }}">{% if relatedExhibitsByTheme|length > 0 and exhibit.short_title %}{{ exhibit.short_title }}{% else %}{{ exhibit.title }}{% endif %}</h1>
+  <h1 id="js-exhibit-title" data-slug="{{ exhibit.slug }}">{% if relatedExhibitsByTheme|length > 0 and exhibit.short_title %}{{ exhibit.short_title }}{% else %}{{ exhibit.title }}{% endif %}</h1>
   
   <div class="exhibit__hero" style="background-image: url('{{ thumbnailUrl }}clip/1400x280/{{ exhibit.hero }}')">
     <div class="col-sm-6">
