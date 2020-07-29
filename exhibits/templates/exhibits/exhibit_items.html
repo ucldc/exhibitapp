@@ -37,7 +37,7 @@
           {% elif item.custom_crop %}
             <img class="thumbnail__image" src="{{ thumbnailUrl }}crop/210x210/{{ item.custom_crop }}"
             srcset="{{ thumbnailUrl }}crop/210x210/{{ item.custom_crop }} 60w, {{ thumbnailUrl }}crop/310x310/{{ item.custom_crop }} 50w"
-            sizes="100vw">
+            sizes="100vw" alt="">
           {% endif %}
 
           <div class="exhibit__caption">
