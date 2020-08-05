@@ -1,0 +1,23 @@
+{
+  "name": "exhibitapp",
+  "version": "1.0.0",
+  "description": "exhibitapp is the exhibit part of github.com/ucldc/public_interface/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ucldc/exhibitapp.git"
+  },
+  "author": "Amy Wieliczka",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ucldc/exhibitapp/issues"
+  },
+  "homepage": "https://github.com/ucldc/exhibitapp#readme",
+  "devDependencies": {
+    "pa11y": "^5.3.0",
+    "pa11y-ci": "^2.3.0"
+  }
+}
