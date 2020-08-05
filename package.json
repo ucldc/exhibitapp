@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/ucldc/exhibitapp.git"
   },
+  "engines": {
+    "node": ">=10.8.0"
+  },
   "author": "Amy Wieliczka",
   "license": "BSD-3-Clause",
   "bugs": {
