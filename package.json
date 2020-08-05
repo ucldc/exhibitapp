@@ -2,8 +2,9 @@
   "name": "exhibitapp",
   "version": "1.0.0",
   "description": "exhibitapp is the exhibit part of github.com/ucldc/public_interface/",
-  "main": "index.js",
   "scripts": {
+    "pa11y": "pa11y --runner axe --runner htmlcs",
+    "pa11yci": "mkdir -p .pa11yci/screencaptures && pa11y-ci --config .pa11yci/pa11yci.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
