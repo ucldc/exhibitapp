@@ -1,0 +1,27 @@
+{
+  "name": "exhibitapp",
+  "version": "1.0.0",
+  "description": "exhibitapp is the exhibit part of github.com/ucldc/public_interface/",
+  "scripts": {
+    "pa11y": "pa11y --runner axe --runner htmlcs",
+    "pa11yci": "mkdir -p .pa11yci/screencaptures && pa11y-ci --config .pa11yci/pa11yci.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ucldc/exhibitapp.git"
+  },
+  "engines": {
+    "node": ">=10.8.0"
+  },
+  "author": "Amy Wieliczka",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/ucldc/exhibitapp/issues"
+  },
+  "homepage": "https://github.com/ucldc/exhibitapp#readme",
+  "devDependencies": {
+    "pa11y": "^5.3.0",
+    "pa11y-ci": "^2.3.0"
+  }
+}

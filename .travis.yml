@@ -1,0 +1,27 @@
+language: python
+
+python:
+  - 3.6
+
+install:
+  - npm install
+  - pip install -r requirements.txt
+  - cd ..
+  - git clone https://github.com/ucldc/public_interface.git
+  - cd public_interface
+  - npm install
+  - pip install -r requirements.txt
+  - ln -s ../exhibitapp/exhibits/
+
+before_script:
+  - export BOTO_CONFIG=/dev/null # https://github.com/travis-ci/travis-ci/issues/7940#issuecomment-311411559
+  - npx gulp
+  - python manage.py migrate --noinput
+  - python manage.py loaddata exhibits/fixtures/exhibits-2019-12-18-migrate-exhibits.json
+  - python manage.py collectstatic --noinput
+  - python manage.py runserver &
+  - cd ../exhibitapp/
+  - sleep 15
+
+script:
+  - npm run pa11yci

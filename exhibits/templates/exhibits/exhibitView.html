@@ -29,7 +29,7 @@
       </li>
       {% if relatedExhibitsByTheme|length > 0 %}
         <li>
-          <a href="{{ relatedExhibitsByTheme.0.0.get_absolute_url }}" aria-level="1" data-pjax="js-pageContent">
+          <a href="{{ relatedExhibitsByTheme.0.0.get_absolute_url }}" data-pjax="js-pageContent">
             {{ relatedExhibitsByTheme.0.0 }}
           </a>
         </li>
@@ -49,7 +49,7 @@
 
   <div class="exhibit__items">
     <h2 class="exhibit__items-header">{{ exhibitItems|length }} exhibition items</h2>
-    {% if exhibitItems|length > 12 %}<a href="javascript: void(0)" class="js-show-all-exhibit-items">View all</a>{% endif %}
+    {% if exhibitItems|length > 12 %}<a href="javascript: void(0)" class="exhibit__view-all js-show-all-exhibit-items">View all</a>{% endif %}
     {% include "exhibits/exhibit_items.html" with url_name='exhibits:itemView' url_id=exhibit.id %}
   </div>
   

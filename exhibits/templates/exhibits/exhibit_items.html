@@ -11,7 +11,7 @@
                 src="{{ thumbnailUrl }}crop/210x210/{{ exhibitItemData.reference_image_md5 }}"
                 srcset="{{ thumbnailUrl }}crop/210x210/{{ exhibitItemData.reference_image_md5 }} 60w, {{ thumbnailUrl }}crop/310x310/{{ exhibitItemData.reference_image_md5 }} 50w"
                 sizes="100vw"
-                alt="{{ exhibitItemData.title.0|truncatewords:12 }}">
+                alt="">
                 {% if exhibitItemData.type_ss.0|lower == "moving image" %}
                 <div class="thumbnail__overlay-icon fa-video-camera"></div>
                 {% elif exhibitItemData.type_ss.0|lower == "sound"%}
@@ -37,7 +37,7 @@
           {% elif item.custom_crop %}
             <img class="thumbnail__image" src="{{ thumbnailUrl }}crop/210x210/{{ item.custom_crop }}"
             srcset="{{ thumbnailUrl }}crop/210x210/{{ item.custom_crop }} 60w, {{ thumbnailUrl }}crop/310x310/{{ item.custom_crop }} 50w"
-            sizes="100vw">
+            sizes="100vw" alt="">
           {% endif %}
 
           <div class="exhibit__caption">
@@ -66,6 +66,6 @@
 
 <div class="row text-right">
   {% if exhibitItems|length > 12 %}
-    <a href="javascript: void(0)" class="js-show-all-exhibit-items">View all</a>
+    <a href="javascript: void(0)" class="exhibit__view-all js-show-all-exhibit-items">View all</a>
   {% endif %}
 </div>
