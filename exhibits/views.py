@@ -7,6 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from exhibits.models import *
 from itertools import chain
 from django.conf import settings
+from collections import namedtuple
+import requests
 import random
 import json
 
@@ -278,3 +280,48 @@ def exhibitItemView(request):
             'items': items})
 
     return JsonResponse(response)
+
+SolrDocs = namedtuple(
+    'SolrDocs', 'results header numFound')
+
+
+def SOLR_get(ids):
+    solr_url = '{}/get/'.format(settings.SOLR_URL)
+    solr_auth = {'X-Authentication-Token': settings.SOLR_API_KEY}
+    query = {'ids': ', '.join(ids)}
+    print(query)
+    resp = requests.post(solr_url, headers=solr_auth, data=query, verify=False)
+    results = json.loads(resp.content.decode('utf-8'))
+    print(results)
+    return SolrDocs(
+        results['response']['docs'],
+        results['responseHeader'],
+        results['response']['numFound'],
+    )
+
+
+def item_health(request): 
+
+    exhibit_items = ExhibitItem.objects.all()
+    custom_crop = ExhibitItem.objects.exclude(custom_crop='')
+    custom_link = ExhibitItem.objects.exclude(custom_link='')
+    custom_metadata = ExhibitItem.objects.exclude(custom_metadata='')
+    custom_title = ExhibitItem.objects.exclude(custom_title='')
+
+    first_ten = list(exhibit_item.item_id for exhibit_item in exhibit_items)[0:2]
+    solr_get = SOLR_get(first_ten)
+    print(solr_get)
+
+    context = {
+        'custom_crop_count': len(custom_crop),
+        'custom_link_count': len(custom_link),
+        'custom_metadata_count': len(custom_metadata),
+        'custom_title_count': len(custom_title),
+        'exhibit_item_count': ExhibitItem.objects.count(),
+        'exhibit_items': exhibit_items
+    }
+
+    return render(request, 'exhibits/item_health.html', context)
+
+
+

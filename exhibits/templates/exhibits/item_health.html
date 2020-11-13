@@ -1,0 +1,14 @@
+{% extends exhibitBaseTemplate|pjax_available:request %}
+{% block content %}
+
+{{ exhibit_item_count }} total items<br/>
+{{ custom_crop_count }} items have a custom image<br/>
+{{ custom_link_count }} items have a custom link<br/>
+{{ custom_metadata_count }} items have custom metadata<br/>
+{{ custom_title_count }} items have a custom title<br/>
+
+{% for item in exhibit_items %}
+	{{ item }} - {{ item.custom_crop }}<br/>
+{% endfor %}
+
+{% endblock %}

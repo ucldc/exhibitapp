@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^(?P<exhibit_id>\d+)/items/(?P<item_id>.+)/$', views.itemView, name='itemView'),
     url(r'^essay/(?P<essay_id>\d+)/(?P<essay_slug>[-\w]+)/$', views.essayView, name='essayView'),
     url(r'^t(?P<theme_id>\d+)/(?P<theme_slug>[-_\w]+)/$', views.themeView, name='themeView'),
-    url(r'^exhibitReport/$', views.exhibitItemView, name='exhibitReport')
+    url(r'^exhibitReport/$', views.exhibitItemView, name='exhibitReport'),
+    url(r'^item_health/$', views.item_health, name='itemHealth')
 ]
