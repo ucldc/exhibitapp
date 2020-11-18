@@ -8,7 +8,7 @@
 	{% elif item.historical_essay %}H
 	{% else %}!!!
 	{% endif %}
-	- <a href="{% url 'calisphere:itemView' item.item_id %}">
+	- <a href="https://calisphere.org/item/{{item.item_id}}/">
 		{{ item }}
 	</a> - 
 	{% if item.exhibit %} 
@@ -34,7 +34,7 @@
 	{% elif item.historical_essay %}H
 	{% else %}!!!
 	{% endif %}
-	- <a href="{% url 'calisphere:itemView' item.item_id %}">
+	- <a href="https://calisphere.org/item/{{item.item_id}}/">
 		{{ item }}
 	</a> - 
 	{% if item.exhibit %} 
