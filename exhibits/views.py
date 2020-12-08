@@ -8,6 +8,7 @@ from exhibits.models import *
 from itertools import chain
 from django.conf import settings
 from collections import namedtuple
+from exhibits.cache_retry import SOLR_get
 import requests
 import random
 import json
@@ -280,22 +281,6 @@ def exhibitItemView(request):
             'items': items})
 
     return JsonResponse(response)
-
-SolrDocs = namedtuple(
-    'SolrDocs', 'results header numFound')
-
-
-def SOLR_get(ids):
-    solr_url = '{}/get'.format(settings.SOLR_URL)
-    solr_auth = {'X-Authentication-Token': settings.SOLR_API_KEY}
-    query = {'ids': ','.join(ids)}
-    resp = requests.get(solr_url, headers=solr_auth, data=query, verify=False)
-    results = json.loads(resp.content.decode('utf-8'))
-    return SolrDocs(
-        results['response']['docs'],
-        resp.status_code,
-        results['response']['numFound'],
-    )
 
 
 def item_health(request): 

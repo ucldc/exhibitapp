@@ -2,6 +2,8 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 
 from . import views
+from . import cache_retry
+from django.conf import settings
 
 app_name = 'exhibits'
 urlpatterns = [
@@ -16,3 +18,6 @@ urlpatterns = [
     url(r'^exhibitReport/$', views.exhibitItemView, name='exhibitReport'),
     url(r'^item_health/$', views.item_health, name='itemHealth')
 ]
+
+if settings.SOLR_OPTS:
+    urlpatterns.append(url(r'^switch-solr/', cache_retry.switch_solr, name='switch_solr'))
