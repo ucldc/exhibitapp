@@ -33,8 +33,6 @@ SOLR_DEFAULTS = {
     'ps': 12,
 }
 
-from collection_registry.settings import getenv
-
 DEFAULT_SOLR_URL = settings.SOLR_URL
 SOLR_URL = DEFAULT_SOLR_URL
 DEFAULT_SOLR_API_KEY = settings.SOLR_API_KEY

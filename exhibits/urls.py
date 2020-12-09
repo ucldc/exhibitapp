@@ -16,8 +16,11 @@ urlpatterns = [
     url(r'^essay/(?P<essay_id>\d+)/(?P<essay_slug>[-\w]+)/$', views.essayView, name='essayView'),
     url(r'^t(?P<theme_id>\d+)/(?P<theme_slug>[-_\w]+)/$', views.themeView, name='themeView'),
     url(r'^exhibitReport/$', views.exhibitItemView, name='exhibitReport'),
-    url(r'^item_health/$', views.item_health, name='itemHealth')
 ]
 
-if settings.SOLR_OPTS:
-    urlpatterns.append(url(r'^switch-solr/', cache_retry.switch_solr, name='switch_solr'))
+if not settings.CALISPHERE:
+    registry_urls = [
+        url(r'^item_health/$', views.item_health, name='itemHealth'),
+        url(r'^switch-solr/', cache_retry.switch_solr, name='switch_solr')
+    ]
+    urlpatterns = urlpatterns + registry_urls
