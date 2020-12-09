@@ -1,0 +1,185 @@
+{% extends exhibitBaseTemplate|pjax_available:request %}
+{% block content %}
+
+<h2>Published Missing Items</h2>
+{% for item in published_missing %}
+	{% if item.exhibit %}E
+	{% elif item.lesson_plan %}L
+	{% elif item.historical_essay %}H
+	{% else %}!!!
+	{% endif %}
+	- <a href="https://calisphere.org/item/{{item.item_id}}/">
+		{{ item }}
+	</a> - 
+	{% if item.exhibit %} 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% endif %}
+	<br/>
+{% endfor %}
+
+<h2>Unpublished Missing Items</h2>
+{% for item in unpublished_missing %}
+	{% if item.exhibit %}E
+	{% elif item.lesson_plan %}L
+	{% elif item.historical_essay %}H
+	{% else %}!!!
+	{% endif %}
+	- <a href="https://calisphere.org/item/{{item.item_id}}/">
+		{{ item }}
+	</a> - 
+	{% if item.exhibit %} 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% endif %}
+	<br/>
+{% endfor %}
+
+<h2>Published Missing Custom Link</h2>
+{% for item in published_missing_link %}
+	{% if item.exhibit %}
+		E - 
+		<a href="{% url 'exhibits:itemView' item.exhibit.id item.item_id %}">
+			{{ item }}
+		</a> - 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		L - 
+		<a href="{% url 'for-teachers:lessonPlanItemView' item.lesson_plan.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		H - 
+		<a href="{% url 'exhibits:itemView' item.historical_essay.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% else %}
+		{{ item }}
+	{% endif %}
+	<br/>
+{% endfor %}
+
+<h2>Unpublished Missing Custom Link</h2>
+{% for item in unpublished_missing_link %}
+	{% if item.exhibit %}
+		E - 
+		<a href="{% url 'exhibits:itemView' item.exhibit.id item.item_id %}">
+			{{ item }}
+		</a> - 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		L - 
+		<a href="{% url 'for-teachers:lessonPlanItemView' item.lesson_plan.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		H - 
+		<a href="{% url 'exhibits:itemView' item.historical_essay.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% else %}
+		{{ item }}
+	{% endif %}
+	<br/>
+{% endfor %}
+
+
+<h2>Published Investigate Items</h2>
+{% for item in published_investigate %}
+	{% if item.exhibit %}
+		E - 
+		<a href="{% url 'exhibits:itemView' item.exhibit.id item.item_id %}">
+			{{ item }}
+		</a> - 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		L - 
+		<a href="{% url 'for-teachers:lessonPlanItemView' item.lesson_plan.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		H - 
+		<a href="{% url 'exhibits:itemView' item.historical_essay.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% else %}
+		{{ item }}
+	{% endif %}
+	<br/>
+{% endfor %}
+
+<h2>Unpublished Investigate Items</h2>
+{% for item in unpublished_investigate %}
+	{% if item.exhibit %}
+		E - 
+		<a href="{% url 'exhibits:itemView' item.exhibit.id item.item_id %}">
+			{{ item }}
+		</a> - 
+		<a href="{% url 'exhibits:exhibitView' item.exhibit.id item.exhibit.slug %}">
+			{{ item.exhibit }}
+		</a>
+	{% elif item.lesson_plan %}
+		L - 
+		<a href="{% url 'for-teachers:lessonPlanItemView' item.lesson_plan.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'for-teachers:lessonPlanView' item.lesson_plan.id item.lesson_plan.slug %}">
+			{{ item.lesson_plan }}
+		</a>
+	{% elif item.historical_essay %}
+		H - 
+		<a href="{% url 'exhibits:itemView' item.historical_essay.id item.item_id %}">
+			{{ item }}
+		</a> -
+		<a href="{% url 'exhibits:essayView' item.historical_essay.id item.historical_essay.slug %}">
+			{{ item.historical_essay }}
+		</a>
+	{% else %}
+		{{ item }}
+	{% endif %}
+	<br/>
+{% endfor %}
+
+{% endblock %}

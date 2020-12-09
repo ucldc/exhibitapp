@@ -7,6 +7,8 @@ from django.core.exceptions import ObjectDoesNotExist
 from exhibits.models import *
 from itertools import chain
 from django.conf import settings
+from collections import namedtuple
+import requests
 import random
 import json
 
@@ -278,3 +280,124 @@ def exhibitItemView(request):
             'items': items})
 
     return JsonResponse(response)
+
+SolrDocs = namedtuple(
+    'SolrDocs', 'results header numFound')
+
+
+def SOLR_get(ids):
+    solr_url = '{}/get'.format(settings.SOLR_URL)
+    solr_auth = {'X-Authentication-Token': settings.SOLR_API_KEY}
+    query = {'ids': ','.join(ids)}
+    resp = requests.get(solr_url, headers=solr_auth, data=query, verify=False)
+    results = json.loads(resp.content.decode('utf-8'))
+    return SolrDocs(
+        results['response']['docs'],
+        resp.status_code,
+        results['response']['numFound'],
+    )
+
+
+def item_health(request): 
+    page_size = 100
+    exhibit_item_ids = ExhibitItem.objects.values_list('item_id', flat=True)
+    missing_items = []
+    for start in range(0, len(exhibit_item_ids), page_size):
+        page = exhibit_item_ids[start:start+page_size]
+        solr_get = SOLR_get(page)
+        if solr_get.numFound == page_size:
+            continue
+        else:
+            solr_ids = [item['id'] for item in solr_get.results]
+            missing = list((set(page) - set(solr_ids)))
+            missing_items = missing_items + missing
+
+    published_missing = []
+    unpublished_missing = []
+
+    published_missing_link = []
+    unpublished_missing_link = []
+
+    published_investigate = []
+    unpublished_investigate = []
+
+    # .exclude(publish=False).exclude(exhibit__publish=False)
+
+    for item_id in missing_items:
+        missing_items_by_id = ExhibitItem.objects.filter(item_id=item_id)
+        for missing_item in missing_items_by_id:
+            # if NO custom data - this is definitely a problem object
+            if (not missing_item.custom_crop 
+                and not missing_item.custom_link 
+                and not missing_item.custom_metadata 
+                and not missing_item.custom_title):
+                if (missing_item.publish == True 
+                    and ((
+                        missing_item.exhibit and missing_item.exhibit.publish==True)
+                        or (missing_item.lesson_plan and missing_item.lesson_plan.publish==True)
+                        or (missing_item.historical_essay and missing_item.historical_essay.publish==True)
+                        )):
+                    published_missing.append(missing_item)
+                else:
+                    unpublished_missing.append(missing_item)
+
+            # if ALL custom data - this is definitely not a problem object
+            elif (missing_item.custom_crop 
+                and missing_item.custom_link
+                and missing_item.custom_metadata
+                and missing_item.custom_title):
+                continue
+
+            # has some, but not all custom data, definitely missing custom link
+            elif (missing_item.custom_crop
+                and not missing_item.custom_link
+                and missing_item.custom_metadata
+                and missing_item.custom_title):
+                if (missing_item.publish == True 
+                    and ((
+                        missing_item.exhibit and missing_item.exhibit.publish==True)
+                        or (missing_item.lesson_plan and missing_item.lesson_plan.publish==True)
+                        or (missing_item.historical_essay and missing_item.historical_essay.publish==True)
+                        )):
+                    published_missing_link.append(missing_item)
+                else:
+                    unpublished_missing_link.append(missing_item)
+            else:
+                if (missing_item.publish == True 
+                    and ((
+                        missing_item.exhibit and missing_item.exhibit.publish==True)
+                        or (missing_item.lesson_plan and missing_item.lesson_plan.publish==True)
+                        or (missing_item.historical_essay and missing_item.historical_essay.publish==True)
+                        )):
+                    published_investigate.append(missing_item)
+                else:
+                    unpublished_investigate.append(missing_item)
+
+    # print(f"RED: {has_no_custom}")
+    # print(len(has_no_custom))
+    # print(f"ORANGE - MISSING CUSTOM SOMETHING: {has_some_custom}")
+    # print(len(has_some_custom))
+
+    # custom_crop = ExhibitItem.objects.exclude(custom_crop='')
+    # custom_link = ExhibitItem.objects.exclude(custom_link='')
+    # custom_metadata = ExhibitItem.objects.exclude(custom_metadata='')
+    # custom_title = ExhibitItem.objects.exclude(custom_title='')
+
+    context = {
+        # 'custom_crop_count': len(custom_crop),
+        # 'custom_link_count': len(custom_link),
+        # 'custom_metadata_count': len(custom_metadata),
+        # 'custom_title_count': len(custom_title),
+        # 'exhibit_item_count': ExhibitItem.objects.count(),
+        'published_missing': published_missing,
+        'unpublished_missing': unpublished_missing,
+        'published_missing_link': published_missing_link,
+        'unpublished_missing_link': unpublished_missing_link,
+        'published_investigate': published_investigate,
+        'unpublished_investigate': unpublished_investigate
+    }
+
+    return render(request, 'exhibits/item_health.html', context)
+
+
+
