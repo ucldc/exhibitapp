@@ -7,9 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from exhibits.models import *
 from itertools import chain
 from django.conf import settings
-from collections import namedtuple
 from exhibits.cache_retry import SOLR_get
-import requests
 import random
 import json
 
