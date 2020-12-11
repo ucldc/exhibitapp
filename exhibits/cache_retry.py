@@ -81,15 +81,13 @@ def switch_solr(request):
         {'current_solr': 'stg'})
 
 def solr_switcher(version):
-    try:
+    if not settings.CALISPHERE:
         switch = [opt for opt in settings.SOLR_OPTS if opt['version'] == version][0]
         if switch:
             global SOLR_URL, SOLR_API_KEY, SOLR_VERSION
             SOLR_URL = switch['url']
             SOLR_API_KEY = switch['api_key']
             SOLR_VERSION = switch['version']
-    except AttributeError:
-        pass
 
 
 SolrResults = namedtuple(
