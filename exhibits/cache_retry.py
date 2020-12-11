@@ -78,7 +78,7 @@ except AttributeError:
 def switch_solr(request):
     solr_switcher(request.GET.get('v', 'default'))
     return JsonResponse(
-        {'current_solr': 'stg'})
+        {'current_solr': SOLR_VERSION})
 
 def solr_switcher(version):
     if not settings.CALISPHERE:
