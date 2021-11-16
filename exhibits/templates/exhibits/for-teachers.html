@@ -18,7 +18,7 @@
 
     <h2>What you'll find here</h2>
     <p>Calisphere contains hundreds of thousands of primary source materials from libraries, archives, and museums across California. Documents of world events and expressions of human culture, these materials are not limited by subject or scope. That said, the collection is particularly strong in U.S. and California history.</p>
-    <p>For general information about finding and using materials on Calisphere, {% if not active_tab %}<a href="{% url 'calisphere:help' %}" data-pjax="js-pageContent">{% endif %}visit the FAQ{% if not active_tab %}</a>{% endif%}.</p>
+    <p>For general information about finding and using materials in Calisphere, {% if not active_tab %}<a href="{% url 'calisphere:help' %}" data-pjax="js-pageContent">{% endif %}visit the FAQ{% if not active_tab %}</a>{% endif%}.</p>
 
     <h3>Exhibitions</h3>
     <p>A good way for educators and students to start exploring Calisphere is by visiting our <a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">exhibitions</a>. The exhibitions present small selections of Calisphere items in historical context, and many of them were originally created expressly for classroom learning. Some of the exhibitions are grouped into bigger themes: <a href="{% url 'exhibits:exhibitDirectory' 'cal-history' %}" data-pjax="js-pageContent">California History</a>, <a href="{% url 'exhibits:exhibitDirectory' 'cal-cultures' %}" data-pjax="js-pageContent">California Cultures</a>, and the <a href="{% url 'exhibits:exhibitDirectory' 'jarda' %}" data-pjax="js-pageContent">Japanese American Relocation Digital Archives (JARDA)</a>. As you explore the exhibitions, you can dive further down into {% if not active_tab %}<a href="{% url 'calisphere:collectionsDirectory' %}" data-pjax="js-pageContent">{% endif %}collections{% if not active_tab %}</a>{% endif %} to find more items</p>
@@ -33,7 +33,7 @@
     </p>
 
     <h3>Lesson plans</h3>
-    <p>A selection of lesson plans relate to the content on Calisphere. Please note that some of these lesson plans date to earlier versions of the site and may contain old links. We have tried to redirect these whenever possible. </p>
+    <p>A selection of lesson plans relate to the content in Calisphere. Please note that some of these lesson plans date to earlier versions of the site and may contain old links. We have tried to redirect these whenever possible. </p>
 
     <p>
     {% for lessonPlan in lessonPlans %}
