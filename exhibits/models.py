@@ -6,7 +6,6 @@ import re
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from exhibits.custom_fields import HeroField
 from exhibits.md5s3stash import md5s3stash
@@ -79,7 +78,6 @@ class PublishedExhibitManager(models.Manager):
         else:
             return super(PublishedExhibitManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class Exhibit(models.Model):
     title = models.CharField(max_length=512)
     slug = models.SlugField(max_length=255, unique=True)
@@ -200,7 +198,6 @@ class PublishedHistoricalEssayManager(models.Manager):
         else:
             return super(PublishedHistoricalEssayManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class HistoricalEssay(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=255, unique=True)
@@ -300,7 +297,6 @@ class PublishedLessonPlanManager(models.Manager):
         else:
             return super(PublishedLessonPlanManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class LessonPlan(models.Model):
     title = models.CharField(max_length=200)
     sub_title = models.CharField(max_length=512, blank=True)
@@ -391,7 +387,6 @@ class PublishedThemeManager(models.Manager):
         else:
             return super(PublishedThemeManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class Theme(models.Model):
     title = models.CharField(max_length=200)
     sort_title = models.CharField(blank=True, max_length=200, verbose_name='Sortable Title')
@@ -503,7 +498,6 @@ class PublishedExhibitItemManager(models.Manager):
         else:
             return super(PublishedExhibitItemManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class ExhibitItem(models.Model):
     item_id = models.CharField(max_length=200)
 
@@ -586,7 +580,6 @@ class ExhibitItem(models.Model):
                     super(ExhibitItem, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-@python_2_unicode_compatible
 class NotesItem(models.Model):
     title = models.CharField(max_length=200)
     exhibit = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
@@ -621,7 +614,6 @@ class LessonPlanExhibit(models.Model):
         ordering = ['order']
 
 # Exhibits ordered within Themes
-@python_2_unicode_compatible
 class ExhibitTheme(models.Model):
     exhibit = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
     theme = models.ForeignKey(Theme, on_delete=models.CASCADE)
