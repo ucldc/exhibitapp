@@ -540,7 +540,7 @@ class ExhibitItem(models.Model):
     def __str__(self):
         return self.item_id
 
-    def solrData(self):
+    def indexedData(self):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
         item_search = es_get(self.item_id)
         if item_search:
