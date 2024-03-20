@@ -63,6 +63,14 @@ def getRepositoryData(repository_data):
 
     return repository
 
+def get_reference_image_md5(item_id):
+    item_id_search_term = 'id:"{0}"'.format(item_id)
+    item_solr_search = SOLR_select(q=item_id_search_term)
+    if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
+        return item_solr_search.results[0]['reference_image_md5']
+    else:
+        return None
+
 # class ImageArk(models.Model):
 #     hero = models.ImageField(blank=True, verbose_name='Hero Image', upload_to='uploads/')
 #     lockup_derivative = models.ImageField(blank=True, verbose_name='Lockup Image', upload_to='uploads/')
@@ -140,10 +148,9 @@ class Exhibit(models.Model):
         elif self.hero_first:
             return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/273x182/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+                return settings.THUMBNAIL_URL + "crop/273x182/" + reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
             else:
@@ -153,10 +160,9 @@ class Exhibit(models.Model):
         if self.hero_first:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
             else:
@@ -164,10 +170,9 @@ class Exhibit(models.Model):
 
     def social_media_card(self):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
             else:
@@ -267,10 +272,9 @@ class HistoricalEssay(models.Model):
         if self.hero_first:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
             else:
@@ -278,10 +282,9 @@ class HistoricalEssay(models.Model):
 
     def social_media_card(self):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
             else:
@@ -348,10 +351,9 @@ class LessonPlan(models.Model):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.lockup_derivative.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             else:
                 return None
 
@@ -359,10 +361,9 @@ class LessonPlan(models.Model):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "clip/999x999/" + self.lockup_derivative.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             else:
                 return None
 
@@ -454,10 +455,9 @@ class Theme(models.Model):
         elif self.hero_first:
             return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/420x210/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "crop/420x210/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
             else:
@@ -482,10 +482,9 @@ class Theme(models.Model):
 
     def social_media_card(self):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
                 return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
             else:
@@ -562,10 +561,9 @@ class ExhibitItem(models.Model):
         if self.custom_crop:
             return settings.THUMBNAIL_URL + "crop/210x210/" + self.custom_crop.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/210x210/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id)
+            if reference_image_md5:
+               return settings.THUMBNAIL_URL + "crop/210x210/" +  reference_image_md5
             else:
                 return None
 
