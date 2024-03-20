@@ -13,8 +13,10 @@ from exhibits.md5s3stash import md5s3stash
 
 try:
     from calisphere.cache_retry import SOLR_get
+    from calisphere.es_cache_retry import es_get
 except ImportError:
     from exhibits.cache_retry import SOLR_get
+    # from exhibits.es_cache_retry import es_get
 
 RENDERING_OPTIONS = (
     ('H', 'HTML'),
@@ -65,7 +67,8 @@ def getRepositoryData(repository_data):
 
 def get_reference_image_md5(item_id):
     item_id_search_term = 'id:"{0}"'.format(item_id)
-    item_search = SOLR_get(q=item_id_search_term)
+    item_search = es_get(item_id)
+
     if item_search and 'reference_image_md5' in item_search.item:
         return item_search.item['reference_image_md5']
     else:
@@ -541,7 +544,7 @@ class ExhibitItem(models.Model):
 
     def solrData(self):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
-        item_search = SOLR_get(q=item_id_search_term)
+        item_search = es_get(self.item_id)
         if item_search:
             item = item_search.item
 
