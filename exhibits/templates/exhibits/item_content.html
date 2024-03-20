@@ -18,7 +18,7 @@
 
   <div class="exhibit__modal-content-wrapper">
   {% with clipto="500x500" %}
-  {% with item=exhibitItem.solrData %}
+  {% with item=exhibitItem.indexedData %}
   {% if item %}
     <div class="exhibit__modal-content">
       <div class="obj-container__simple-{% if 'reference_image_md5' in item %}image{% else %}tile{% endif %}">
