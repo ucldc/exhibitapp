@@ -2,7 +2,6 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 
 from . import views
-from .cache_retry import switch_solr
 from django.conf import settings
 
 app_name = 'exhibits'
@@ -21,6 +20,5 @@ urlpatterns = [
 if not settings.CALISPHERE:
     registry_urls = [
         url(r'^item_health/$', views.item_health, name='itemHealth'),
-        url(r'^switch-solr/', switch_solr, name='switch_solr')
     ]
     urlpatterns = urlpatterns + registry_urls
