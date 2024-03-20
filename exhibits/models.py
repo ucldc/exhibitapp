@@ -12,11 +12,9 @@ from exhibits.custom_fields import HeroField
 from exhibits.md5s3stash import md5s3stash
 
 try:
-    from calisphere.cache_retry import SOLR_get
     from calisphere.es_cache_retry import es_get
 except ImportError:
-    from exhibits.cache_retry import SOLR_get
-    # from exhibits.es_cache_retry import es_get
+    from exhibits.es_cache_retry import es_get
 
 RENDERING_OPTIONS = (
     ('H', 'HTML'),
