@@ -11,9 +11,9 @@ from exhibits.custom_fields import HeroField
 from exhibits.md5s3stash import md5s3stash
 
 try:
-    from calisphere.cache_retry import SOLR_select
+    from calisphere.cache_retry import SOLR_get
 except ImportError:
-    from exhibits.cache_retry import SOLR_select
+    from exhibits.cache_retry import SOLR_get
 
 RENDERING_OPTIONS = (
     ('H', 'HTML'),
@@ -64,9 +64,9 @@ def getRepositoryData(repository_data):
 
 def get_reference_image_md5(item_id):
     item_id_search_term = 'id:"{0}"'.format(item_id)
-    item_solr_search = SOLR_select(q=item_id_search_term)
-    if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-        return item_solr_search.results[0]['reference_image_md5']
+    item_search = SOLR_get(q=item_id_search_term)
+    if item_search and 'reference_image_md5' in item_search.item:
+        return item_search.item['reference_image_md5']
     else:
         return None
 
@@ -535,9 +535,9 @@ class ExhibitItem(models.Model):
 
     def solrData(self):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
-        item_solr_search = SOLR_select(q=item_id_search_term)
-        if len(item_solr_search.results) > 0:
-            item = item_solr_search.results[0]
+        item_search = SOLR_get(q=item_id_search_term)
+        if item_search:
+            item = item_search.item
 
             item['parsed_collection_data'] = []
             item['parsed_repository_data'] = []
