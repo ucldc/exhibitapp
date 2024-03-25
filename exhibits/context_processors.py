@@ -5,9 +5,14 @@ def settings(request):
     Put selected settings variables into the default template context
     """
     from django.conf import settings
+    thumbnailUrl = settings.THUMBNAIL_URL
+    if settings.SOLR_URL and settings.SOLR_API_KEY:
+        if request.session.get('index') == 'solr':
+            thumbnailUrl = settings.THUMBNAIL_URL_SOLR
+
     context = {
         'exhibitBaseTemplate': settings.EXHIBIT_TEMPLATE,
-        'thumbnailUrl': settings.THUMBNAIL_URL,
+        'thumbnailUrl': thumbnailUrl,
         'calisphere': settings.CALISPHERE,
         'solr_opts': None,
         'solr_version': None
