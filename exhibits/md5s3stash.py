@@ -2,13 +2,12 @@
 """ md5s3stash
     content addressable storage in AWS S3
 """
+import mimetypes
 import urllib.parse
 import logging
 import hashlib
 import boto3
 from botocore.errorfactory import ClientError
-import magic
-from PIL import Image
 from collections import namedtuple
 
 
@@ -81,6 +80,8 @@ def image_info(filepath):
             2. a tuple of (height, width) if an image; otherwise (0,0)
     '''
     try:
+        import magic
+        from PIL import Image
         return (
             magic.Magic(mime=True).from_file(filepath),
             Image.open(filepath).size
@@ -90,5 +91,5 @@ def image_info(filepath):
             raise e
         else:
             return (None, (0,0))
-
-
+    except ImportError:
+        return (mimetypes.guess_type(filepath), (0,0))
