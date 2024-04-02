@@ -6,9 +6,11 @@ def settings(request):
     """
     from django.conf import settings
     thumbnailUrl = settings.THUMBNAIL_URL
-    if settings.SOLR_URL and settings.SOLR_API_KEY:
+    if settings.MULTI_INDEX:
         if request.session.get('index') == 'solr':
-            thumbnailUrl = settings.THUMBNAIL_URL_SOLR
+            thumbnailUrl = settings.SOLR_THUMBNAILS
+        elif request.session.get('index') == 'es':
+            thumbnailUrl = settings.THUMBNAIL_URL
 
     context = {
         'exhibitBaseTemplate': settings.EXHIBIT_TEMPLATE,
