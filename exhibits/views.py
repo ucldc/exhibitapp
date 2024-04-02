@@ -7,7 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from exhibits.models import *
 from itertools import chain
 from django.conf import settings
-from exhibits.cache_retry import SOLR_get
+from exhibits.cache_retry import SOLR_get_list
 import random
 import json
 
@@ -287,11 +287,11 @@ def item_health(request):
     missing_items = []
     for start in range(0, len(exhibit_item_ids), page_size):
         page = exhibit_item_ids[start:start+page_size]
-        solr_get = SOLR_get(page)
-        if solr_get.numFound == page_size:
+        solr_list = SOLR_get_list(page)
+        if solr_list.numFound == page_size:
             continue
         else:
-            solr_ids = [item['id'] for item in solr_get.results]
+            solr_ids = [item['id'] for item in solr_list.results]
             missing = list((set(page) - set(solr_ids)))
             missing_items = missing_items + missing
 
