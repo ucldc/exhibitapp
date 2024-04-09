@@ -563,7 +563,7 @@ class ExhibitItem(models.Model):
         else:
             return None
 
-    def imgUrl(self, index="solr"):
+    def imgUrl(self, index):
         if self.custom_crop:
             return settings.THUMBNAIL_URL + "crop/210x210/" + self.custom_crop.name
         else:

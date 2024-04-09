@@ -2,6 +2,7 @@
 
 
 from django.contrib import admin
+from django.http import HttpRequest
 from django.utils.safestring import mark_safe
 from django import forms
 from django.db import models
@@ -27,23 +28,32 @@ class ExhibitItemInline(admin.TabularInline):
         return mark_safe(f"<a href='{link}'>Click to add custom crop, link, title, and metadata</a>")
     link_to_exhibit_item.short_description="Link to Exhibit Item"
 
+    def get_queryset(self, request: HttpRequest) -> models.QuerySet:
+        self.calisphere_index = request.session.get('index')
+        return super().get_queryset(request)
+
     def img_display(self, instance):
-        if instance.imgUrl():
-            return mark_safe("<img src='" + instance.imgUrl() + "'/>")
+        if instance.imgUrl(self.calisphere_index):
+            return mark_safe("<img src='" + instance.imgUrl(self.calisphere_index) + "'/>")
         else:
             return None
+
     img_display.short_description = "Thumbnail"
 
 class LessonPlanItemInline(admin.TabularInline):
     model = ExhibitItem
     classes = ('collapse',)
     fields = ['lesson_plan_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'citations', 'citations_render_as', 'link_to_exhibit_item']
-    # 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
+    # 'img_url', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
     extra = 0
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'cols': 50, 'rows': 5})}
     }
-    readonly_fields = ['imgUrl', 'img_display', 'link_to_exhibit_item']
+    readonly_fields = ['img_url', 'img_display', 'link_to_exhibit_item']
+
+    def get_queryset(self, request: HttpRequest) -> models.QuerySet:
+        self.calisphere_index = request.session.get('index')
+        return super().get_queryset(request)
 
     def link_to_exhibit_item(self, instance):
         link = reverse("admin:exhibits_exhibititem_change", args=[instance.id])
@@ -51,34 +61,44 @@ class LessonPlanItemInline(admin.TabularInline):
     link_to_exhibit_item.short_description="Link to Lesson Plan Item"
 
     def img_display(self, instance):
-        if instance.imgUrl():
-            return mark_safe("<img src='" + instance.imgUrl() + "'/>")
+        if instance.imgUrl(self.calisphere_index):
+            return mark_safe("<img src='" + instance.imgUrl(self.calisphere_index) + "'/>")
         else:
             return None
     img_display.short_description = "Thumbnail"
+
+    def img_url(self, instance):
+        return instance.imgUrl(self.calisphere_index)
 
 class HistoricalEssayItemInline(admin.TabularInline):
     model = ExhibitItem
     classes = ('collapse',)
     fields = ['historical_essay_order', 'publish', 'item_id', 'essay', 'render_as', 'img_display', 'citations', 'citations_render_as', 'link_to_exhibit_item']
-    # 'imgUrl', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
+    # 'img_url', 'custom_crop', 'custom_link', 'custom_title', 'custom_metadata', 'metadata_render_as'
     extra = 0
     formfield_overrides = {
         models.TextField: {'widget': forms.Textarea(attrs={'cols': 50, 'rows': 5})}
     }
-    readonly_fields = ['imgUrl', 'img_display', 'link_to_exhibit_item']
+    readonly_fields = ['img_url', 'img_display', 'link_to_exhibit_item']
 
     def link_to_exhibit_item(self, instance):
         link = reverse("admin:exhibits_exhibititem_change", args=[instance.id])
         return mark_safe(f"<a href='{link}'>Click to add custom crop, link, title, and metadata</a>")
     link_to_exhibit_item.short_description="Link to Historical Essay Item"
 
+    def get_queryset(self, request: HttpRequest) -> models.QuerySet:
+        self.calisphere_index = request.session.get('index')
+        return super().get_queryset(request)
+
     def img_display(self, instance):
-        if instance.imgUrl():
-            return mark_safe("<img src='" + instance.imgUrl() + "'/>")
+        if instance.imgUrl(self.calisphere_index):
+            return mark_safe("<img src='" + instance.imgUrl(self.calisphere_index) + "'/>")
         else:
             return None
     img_display.short_description = "Thumbnail"
+
+    def img_url(self, instance):
+        return instance.imgUrl(self.calisphere_index)
 
 class NotesItemInline(admin.TabularInline):
     model = NotesItem
@@ -257,9 +277,13 @@ class ExhibitItemAdmin(admin.ModelAdmin):
 
     readonly_fields = ['container_type', 'container', 'container_order', 'img_display', 'return_to_container']
 
+    def get_queryset(self, request: HttpRequest) -> models.QuerySet:
+        self.calisphere_index = request.session.get('index')
+        return super().get_queryset(request)
+
     def img_display(self, instance):
-        if instance.imgUrl():
-            return mark_safe("<img src='" + instance.imgUrl() + "'/>")
+        if instance.imgUrl(self.calisphere_index):
+            return mark_safe("<img src='" + instance.imgUrl(self.calisphere_index) + "'/>")
         else:
             return None
     img_display.short_description = "Thumbnail"
