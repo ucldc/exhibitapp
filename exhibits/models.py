@@ -64,7 +64,7 @@ def getRepositoryData(repository_data):
 
     return repository
 
-def get_reference_image_md5(item_id, index='solr'):
+def get_reference_image_md5(item_id, index):
     item_id_search_term = 'id:"{0}"'.format(item_id)
     item_search = None
     if index == 'solr':
@@ -147,13 +147,13 @@ class Exhibit(models.Model):
     def get_absolute_url(self):
         return reverse('exhibits:exhibitView', kwargs={'exhibit_id': self.id, 'exhibit_slug': self.slug})
 
-    def exhibit_lockup(self):
+    def exhibit_lockup(self, index):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "crop/273x182/" + self.lockup_derivative.name
         elif self.hero_first:
             return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                 return settings.THUMBNAIL_URL + "crop/273x182/" + reference_image_md5
             elif self.hero:
@@ -161,11 +161,11 @@ class Exhibit(models.Model):
             else:
                 return None
 
-    def exhibit_lockup_sm(self):
+    def exhibit_lockup_sm(self, index):
         if self.hero_first:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             elif self.hero:
@@ -173,9 +173,9 @@ class Exhibit(models.Model):
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
@@ -272,11 +272,11 @@ class HistoricalEssay(models.Model):
                     super(HistoricalEssay, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-    def lockup(self):
+    def lockup(self, index):
         if self.hero_first:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             elif self.hero:
@@ -284,9 +284,9 @@ class HistoricalEssay(models.Model):
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
@@ -350,21 +350,21 @@ class LessonPlan(models.Model):
     def get_absolute_url(self):
         return reverse('for-teachers:lessonPlanView', kwargs={'lesson_id': self.id, 'lesson_slug': self.slug})
 
-    def lockup(self):
+    def lockup(self, index):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "crop/298x121/" + self.lockup_derivative.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "clip/999x999/" + self.lockup_derivative.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             else:
@@ -451,13 +451,13 @@ class Theme(models.Model):
     def get_absolute_url(self):
         return reverse('exhibits:themeView', kwargs={'theme_id': self.id, 'theme_slug': self.slug})
 
-    def theme_lockup(self):
+    def theme_lockup(self, index):
         if self.lockup_derivative:
             return settings.THUMBNAIL_URL + "crop/420x210/" + self.lockup_derivative.name
         elif self.hero_first:
             return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "crop/420x210/" +  reference_image_md5
             elif self.hero:
@@ -482,9 +482,9 @@ class Theme(models.Model):
                     super(Theme, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
             elif self.hero:
@@ -540,7 +540,7 @@ class ExhibitItem(models.Model):
     def __str__(self):
         return self.item_id
 
-    def indexedData(self, index='solr'):
+    def indexedData(self, index):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
         item_search = None
         if index == 'solr':
@@ -563,11 +563,11 @@ class ExhibitItem(models.Model):
         else:
             return None
 
-    def imgUrl(self):
+    def imgUrl(self, index="solr"):
         if self.custom_crop:
             return settings.THUMBNAIL_URL + "crop/210x210/" + self.custom_crop.name
         else:
-            reference_image_md5 = get_reference_image_md5(self.item_id)
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
                return settings.THUMBNAIL_URL + "crop/210x210/" +  reference_image_md5
             else:

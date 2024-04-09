@@ -10,7 +10,9 @@ from django.conf import settings
 from exhibits.cache_retry import SOLR_get_list
 import random
 import json
+from exhibits.utils import cache_by_session_state
 
+@cache_by_session_state
 def calCultures(request):
     california_cultures = Theme.objects.filter(title__icontains='California Cultures').order_by('title')
 
@@ -30,6 +32,7 @@ def calCultures(request):
         'lesson_plans': lesson_plans
     })
 
+@cache_by_session_state
 def exhibitRandom(request):
     exhibits = Exhibit.objects.all()
     themes = Theme.objects.all()
@@ -79,6 +82,7 @@ def exhibitRandom(request):
 
     return render(request, 'exhibits/exhibitRandomExplore.html', {'sets': exhibit_theme_list_by_fives, 'sets_standard': exhibit_theme_list})
 
+@cache_by_session_state
 def exhibitSearch(request):
     if request.method == 'GET' and len(request.GET.getlist('title')) > 0:
         exhibits = Exhibit.objects.filter(title__icontains=request.GET['title']).order_by('title')
@@ -87,6 +91,7 @@ def exhibitSearch(request):
         exhibits = Exhibit.objects.all().order_by('title')
         return render(request, 'exhibits/exhibitSearch.html', {'searchTerm': '', 'exhibits': exhibits})
 
+@cache_by_session_state
 def exhibitDirectory(request, category='search'):
     if category in list(category for (category, display) in Theme.CATEGORY_CHOICES):
         themes = Theme.objects.filter(category=category).order_by('sort_title')
@@ -112,17 +117,20 @@ def exhibitDirectory(request, category='search'):
 
     return render(request, 'exhibits/exhibitDirectory.html', {'themes': [{'', exhibits}], 'categories': Theme.CATEGORY_CHOICES, 'selected': category})
 
+@cache_by_session_state
 def themeDirectory(request):
     jarda = Theme.objects.get(slug='jarda')
     california_cultures = Theme.objects.filter(title__icontains='California Cultures').order_by('title')
     california_history = Theme.objects.exclude(title__icontains='California Cultures').exclude(slug='jarda')
     return render(request, 'exhibits/themeDirectory.html', {'jarda': jarda, 'california_cultures': california_cultures, 'california_history': california_history})
 
+@cache_by_session_state
 def lessonPlanDirectory(request):
     lessonPlans = LessonPlan.objects.all()
     historicalEssays = HistoricalEssay.objects.all()
     return render(request, 'exhibits/for-teachers.html', {'lessonPlans': lessonPlans, 'historicalEssays': historicalEssays})
 
+@cache_by_session_state
 def itemView(request, exhibit_id, item_id):
     fromExhibitPage = request.META.get("HTTP_X_EXHIBIT_ITEM")
     exhibitItem = get_object_or_404(ExhibitItem, item_id=item_id, exhibit=exhibit_id)
@@ -148,6 +156,7 @@ def itemView(request, exhibit_id, item_id):
         return render(request, 'exhibits/itemView.html',
         {'exhibit': exhibit, 'q': '', 'exhibitItems': exhibitItems, 'relatedExhibitsByTheme': exhibitListing, 'exhibitItem': exhibitItem, 'nextItem': nextItem, 'prevItem': prevItem})
 
+@cache_by_session_state
 def lessonPlanItemView(request, lesson_id, item_id):
     fromLessonPage = request.META.get("HTTP_X_EXHIBIT_ITEM")
     exhibitItem = get_object_or_404(ExhibitItem, item_id=item_id, lesson_plan=lesson_id)
@@ -168,6 +177,7 @@ def lessonPlanItemView(request, lesson_id, item_id):
         return render(request, 'exhibits/lessonItemView.html',
         {'lessonPlan': lesson, 'q': '', 'exhibitItems': exhibitItems, 'exhibitItem': exhibitItem, 'nextItem': nextItem, 'prevItem': prevItem})
 
+@cache_by_session_state
 def exhibitView(request, exhibit_id, exhibit_slug):
     fromExhibitPage = request.META.get("HTTP_X_EXHIBIT_ITEM")
     if fromExhibitPage and settings.CALISPHERE:
@@ -187,6 +197,7 @@ def exhibitView(request, exhibit_id, exhibit_slug):
     return render(request, 'exhibits/exhibitView.html',
     {'exhibit': exhibit, 'q': '', 'exhibitItems': exhibitItems, 'relatedExhibitsByTheme': exhibitListing})
 
+@cache_by_session_state
 def essayView(request, essay_id, essay_slug):
     essay = get_object_or_404(HistoricalEssay, pk=essay_id)
     if essay_slug != essay.slug:
@@ -194,6 +205,7 @@ def essayView(request, essay_id, essay_slug):
 
     return render(request, 'exhibits/essayView.html', {'essay': essay, 'q': ''})
 
+@cache_by_session_state
 def themeView(request, theme_id, theme_slug):
     theme = get_object_or_404(Theme, pk=theme_id)
     if theme_slug != theme.slug:
@@ -202,6 +214,7 @@ def themeView(request, theme_id, theme_slug):
     exhibitListing = theme.published_exhibits().all().order_by('order')
     return render(request, 'exhibits/themeView.html', {'theme': theme, 'relatedExhibits': exhibitListing})
 
+@cache_by_session_state
 def lessonPlanView(request, lesson_id, lesson_slug):
     fromLessonPage = request.META.get("HTTP_X_EXHIBIT_ITEM")
     if fromLessonPage and settings.CALISPHERE:
@@ -219,6 +232,7 @@ def lessonPlanView(request, lesson_id, lesson_slug):
     
     return render(request, 'exhibits/lessonPlanView.html', {'lessonPlan': lesson, 'q': '', 'exhibitItems': exhibitItems, 'relatedThemes': relatedThemes})
 
+@cache_by_session_state
 def exhibitItemView(request):
     response = {'exhibits': []}
     exhibits = Exhibit.objects.all()
@@ -280,7 +294,7 @@ def exhibitItemView(request):
 
     return JsonResponse(response)
 
-
+@cache_by_session_state
 def item_health(request): 
     page_size = 100
     exhibit_item_ids = ExhibitItem.objects.values_list('item_id', flat=True)

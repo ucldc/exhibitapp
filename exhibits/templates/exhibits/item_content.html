@@ -1,5 +1,6 @@
 {% load markdown_filter %}
 {% load exhibit_extras %}
+{% load lockups %}
 
 <div class="exhibit__modal">
   {% if prevItem %}
@@ -18,7 +19,7 @@
 
   <div class="exhibit__modal-content-wrapper">
   {% with clipto="500x500" %}
-  {% with item=exhibitItem.indexedData %}
+  {% indexed_data exhibitItem request.session.index as item %}
   {% if item %}
     <div class="exhibit__modal-content">
       <div class="obj-container__simple-{% if 'reference_image_md5' in item %}image{% else %}tile{% endif %}">
@@ -161,7 +162,6 @@
       </div>
     </div>
   {% endif %}
-  {% endwith %}
   {% endwith %}
   </div>
 

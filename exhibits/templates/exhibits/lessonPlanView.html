@@ -1,9 +1,11 @@
 {% extends exhibitBaseTemplate|pjax_available:request %}
 {% load markdown_filter %}
+{% load lockups %}
 
 {% if calisphere %}
   {% block page-metadata %}
-    {% include "calisphere/microdata.html" with title=lessonPlan.title description='Calisphere supports classroom activities and research efforts for students from elementary school through higher education. Use these lesson plans just as they are, or as springboards for your own creative ideas.' meta_image=lessonPlan.social_media_card %}
+    {% social_media_card lessonPlan request.session.index as social_card %}
+    {% include "calisphere/microdata.html" with title=lessonPlan.title description='Calisphere supports classroom activities and research efforts for students from elementary school through higher education. Use these lesson plans just as they are, or as springboards for your own creative ideas.' meta_image=social_card %}
   {% endblock %}
 {% endif %}
 
@@ -90,7 +92,7 @@
             <a href="{{ lpe.exhibit.get_absolute_url }}" data-pjax="js-pageContent">
               <div class="exhibit__lockup--med">
                 <div class="exhibit__lockup--med-image">
-                  <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{{ lpe.exhibit.exhibit_lockup }}');">
+                  <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup lpe.exhibit request.session.index }');">
                   </div>
                 </div>
                 <div class="exhibit__lockup--med-title">
@@ -113,7 +115,7 @@
             <div class="col-xs-2 col-md-3">
               <a href="{{ lp.lessonPlan.get_absolute_url }}" data-pjax="js-pageContent">
                 <div class="exhibit__lesson-lockup">
-                  <div class="aspect-ratio-content exhibit__lesson-lockup-image" style="background-image: url({{ lp.lessonPlan.lockup }});">
+                  <div class="aspect-ratio-content exhibit__lesson-lockup-image" style="background-image: url({% lockup_image lp.lessonPlan request.session.index %});">
                     <div class="exhibit__lesson-lockup-color"></div>
                     <div class="exhibit__lesson-lockup-title">{{ lp.lessonPlan }}</div>
                   </div>
