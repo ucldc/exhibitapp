@@ -23,6 +23,17 @@ RENDERING_OPTIONS = (
     ('M', 'Markdown')
 )
 
+
+def get_thumbnail_url(index):
+    thumbnailUrl = settings.THUMBNAIL_URL
+    if settings.MULTI_INDEX:
+        if index == 'solr':
+            thumbnailUrl = settings.SOLR_THUMBNAILS
+        elif index == 'es':
+            thumbnailUrl = settings.THUMBNAIL_URL
+    return thumbnailUrl
+
+
 def getCollectionData(collection_data):
     collection = {}
     parts = collection_data.split('::')
@@ -149,27 +160,27 @@ class Exhibit(models.Model):
 
     def exhibit_lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/273x182/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/273x182/" + self.lockup_derivative.name
         elif self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/273x182/" + self.hero.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-                return settings.THUMBNAIL_URL + "crop/273x182/" + reference_image_md5
+                return get_thumbnail_url(index) + "crop/273x182/" + reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/273x182/" + self.hero.name
             else:
                 return None
 
     def exhibit_lockup_sm(self, index):
         if self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
             else:
                 return None
 
@@ -177,13 +188,13 @@ class Exhibit(models.Model):
         if self.item_id:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     push_to_s3 = ['hero', 'lockup_derivative', 'alternate_lockup_derivative']
     def save(self, *args, **kwargs):
@@ -274,13 +285,13 @@ class HistoricalEssay(models.Model):
 
     def lockup(self, index):
         if self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
             else:
                 return None
 
@@ -288,13 +299,13 @@ class HistoricalEssay(models.Model):
         if self.item_id:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     def __str__(self):
         return self.title
@@ -352,21 +363,21 @@ class LessonPlan(models.Model):
 
     def lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.lockup_derivative.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "crop/298x121/" +  reference_image_md5
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             else:
                 return None
 
     def social_media_card(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.lockup_derivative.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             else:
                 return None
 
@@ -453,15 +464,15 @@ class Theme(models.Model):
 
     def theme_lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/420x210/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/420x210/" + self.lockup_derivative.name
         elif self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/420x210/" + self.hero.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "crop/420x210/" +  reference_image_md5
+               return get_thumbnail_url(index) + "crop/420x210/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/420x210/" + self.hero.name
             else:
                 return None
 
@@ -486,13 +497,13 @@ class Theme(models.Model):
         if self.item_id:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "clip/999x999/" +  reference_image_md5
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     def __str__(self):
         return self.title
@@ -565,11 +576,11 @@ class ExhibitItem(models.Model):
 
     def imgUrl(self, index):
         if self.custom_crop:
-            return settings.THUMBNAIL_URL + "crop/210x210/" + self.custom_crop.name
+            return get_thumbnail_url(index) + "crop/210x210/" + self.custom_crop.name
         else:
             reference_image_md5 = get_reference_image_md5(self.item_id, index)
             if reference_image_md5:
-               return settings.THUMBNAIL_URL + "crop/210x210/" +  reference_image_md5
+               return get_thumbnail_url(index) + "crop/210x210/" +  reference_image_md5
             else:
                 return None
 
