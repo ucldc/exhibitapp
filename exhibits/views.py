@@ -8,6 +8,7 @@ from exhibits.models import *
 from itertools import chain
 from django.conf import settings
 from exhibits.cache_retry import SOLR_get_list
+from exhibits.es_cache_retry import es_get_ids
 import random
 import json
 from exhibits.utils import cache_by_session_state
@@ -296,17 +297,22 @@ def exhibitItemView(request):
 
 @cache_by_session_state
 def item_health(request): 
+    index = request.session.get('index')
     page_size = 100
     exhibit_item_ids = ExhibitItem.objects.values_list('item_id', flat=True)
     missing_items = []
     for start in range(0, len(exhibit_item_ids), page_size):
-        page = exhibit_item_ids[start:start+page_size]
-        solr_list = SOLR_get_list(page)
-        if solr_list.numFound == page_size:
+        page_of_ids = exhibit_item_ids[start:start+page_size]
+        if index == 'solr':
+            page_of_items = SOLR_get_list(page_of_ids)
+        elif index == 'es':
+            page_of_ids = [str(item_id) for item_id in page_of_ids]
+            page_of_items = es_get_ids(page_of_ids)
+        if page_of_items.numFound == page_size:
             continue
         else:
-            solr_ids = [item['id'] for item in solr_list.results]
-            missing = list((set(page) - set(solr_ids)))
+            found_ids = [item['id'] for item in page_of_items.results]
+            missing = list((set(page_of_ids) - set(found_ids)))
             missing_items = missing_items + missing
 
     published_missing = []

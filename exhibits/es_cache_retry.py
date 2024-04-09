@@ -113,6 +113,11 @@ def es_get(item_id: str) -> Optional[ESItem]:
     return results
 
 
+def es_get_ids(ids: List[str]) -> ESResults:
+    body = {'query': {'ids': {'values': ids}}}
+    return es_search(body)
+
+
 def es_mlt(item_id):
     first_item = es_get(item_id)
     es_query = {
