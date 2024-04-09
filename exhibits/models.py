@@ -64,9 +64,14 @@ def getRepositoryData(repository_data):
 
     return repository
 
-def get_reference_image_md5(item_id):
+def get_reference_image_md5(item_id, index='solr'):
     item_id_search_term = 'id:"{0}"'.format(item_id)
-    item_search = SOLR_get(q=item_id_search_term)
+    item_search = None
+    if index == 'solr':
+        item_search = SOLR_get(q=item_id_search_term)
+    elif index == 'es':
+        item_search = es_get(item_id)
+
     if item_search and 'reference_image_md5' in item_search.item:
         return item_search.item['reference_image_md5']
     else:
@@ -535,9 +540,14 @@ class ExhibitItem(models.Model):
     def __str__(self):
         return self.item_id
 
-    def indexedData(self):
+    def indexedData(self, index='solr'):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
-        item_search = SOLR_get(q=item_id_search_term)
+        item_search = None
+        if index == 'solr':
+            item_search = SOLR_get(q=item_id_search_term)
+        elif index == 'es':
+            item_search = es_get(self.item_id)
+
         if item_search:
             item = item_search.item
 
