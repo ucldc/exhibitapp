@@ -9,14 +9,13 @@ from collections import namedtuple
 import urllib3
 from retrying import retry
 import requests
-import pickle
-import hashlib
 import json
 import itertools
 import re
 from typing import Dict, List, Tuple
 
 from django.http import JsonResponse
+from exhibits.utils import kwargs_md5
 
 urllib3.disable_warnings()
 
@@ -170,13 +169,6 @@ def SOLR(**params):
         facet_counts,
         results.get('nextCursorMark'),
     )
-
-
-# create a hash for a cache key
-def kwargs_md5(**kwargs):
-    m = hashlib.md5()
-    m.update(pickle.dumps(kwargs))
-    return m.hexdigest()
 
 
 # dummy class for holding cached data
