@@ -1,7 +1,6 @@
 """ logic for cache / retry for es (opensearch) and JSON from registry
 """
 
-from future import standard_library
 from django.core.cache import cache
 from django.conf import settings
 
@@ -16,7 +15,6 @@ from elasticsearch.exceptions import ConnectionError as ESConnectionError
 from elasticsearch.exceptions import RequestError as ESRequestError
 
 urllib3.disable_warnings()
-standard_library.install_aliases()
 
 if hasattr(settings, 'XRAY_RECORDER'):
     patch(('requests', ))

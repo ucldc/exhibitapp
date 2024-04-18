@@ -9,7 +9,6 @@ from retrying import retry
 from django.core.cache import cache
 from django.conf import settings
 from functools import wraps
-from django.utils.decorators import available_attrs
 from django.views.decorators.cache import cache_page
 
 
@@ -36,7 +35,7 @@ def json_loads_url(url_or_req):
 
 # https://stackoverflow.com/questions/27347921/in-django-can-per-view-cache-decorator-be-session-dependent-for-a-b-testings
 def cache_by_session_state(func):
-    @wraps(func, assigned=available_attrs(func))
+    @wraps(func)
     def wrapper(request, *args, **kwargs):
         index = request.session.get('index')
 
