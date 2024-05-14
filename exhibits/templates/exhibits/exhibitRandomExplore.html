@@ -1,5 +1,6 @@
 {% extends exhibitBaseTemplate|pjax_available:request %}
 {% load markdown_filter %}
+{% load lockups %}
 
 {% if calisphere %}
   {% block page-metadata %}
@@ -20,7 +21,7 @@
           <a href="{{ entry.get_absolute_url }}" data-pjax="js-pageContent">
             <div class="exhibit__lockup--med">
               <div class="exhibit__lockup--med-image">
-                <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{{ entry.exhibit_lockup }}');">
+                <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup entry request.session.index %}');">
                 </div>
               </div>
               <div class="exhibit__lockup--med-title">
@@ -34,7 +35,7 @@
           <a href="{{ entry.get_absolute_url }}" data-pjax="js-pageContent">
             <div class="theme__lockup--horizontal">
               <div class="theme__lockup--horizontal-image">
-                <div class="aspect-ratio-content theme__lockup--horizontal-image-content" style="background-image: url('{{ entry.theme_lockup }}');">
+                <div class="aspect-ratio-content theme__lockup--horizontal-image-content" style="background-image: url('{% theme_lockup entry request.session.index %}');">
                   <div class="theme__lockup--horizontal-color" style="background-color: {{ entry.color }}"></div>
                   <div class="theme__lockup--horizontal-title">
                     {{ entry.title }}

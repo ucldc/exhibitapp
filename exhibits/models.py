@@ -6,21 +6,33 @@ import re
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 from exhibits.custom_fields import HeroField
 from exhibits.md5s3stash import md5s3stash
 
 try:
-    from calisphere.cache_retry import SOLR_select
+    from calisphere.cache_retry import SOLR_get
+    from calisphere.es_cache_retry import es_get
 except ImportError:
-    from exhibits.cache_retry import SOLR_select
+    from exhibits.cache_retry import SOLR_get
+    from exhibits.es_cache_retry import es_get
 
 RENDERING_OPTIONS = (
     ('H', 'HTML'),
     ('T', 'Plain Text'),
     ('M', 'Markdown')
 )
+
+
+def get_thumbnail_url(index):
+    thumbnailUrl = settings.THUMBNAIL_URL
+    if settings.MULTI_INDEX:
+        if index == 'solr':
+            thumbnailUrl = settings.SOLR_THUMBNAILS
+        elif index == 'es':
+            thumbnailUrl = settings.THUMBNAIL_URL
+    return thumbnailUrl
+
 
 def getCollectionData(collection_data):
     collection = {}
@@ -63,6 +75,19 @@ def getRepositoryData(repository_data):
 
     return repository
 
+def get_reference_image_md5(item_id, index):
+    item_id_search_term = 'id:"{0}"'.format(item_id)
+    item_search = None
+    if index == 'solr':
+        item_search = SOLR_get(q=item_id_search_term)
+    elif index == 'es':
+        item_search = es_get(item_id)
+
+    if item_search and 'reference_image_md5' in item_search.item:
+        return item_search.item['reference_image_md5']
+    else:
+        return None
+
 # class ImageArk(models.Model):
 #     hero = models.ImageField(blank=True, verbose_name='Hero Image', upload_to='uploads/')
 #     lockup_derivative = models.ImageField(blank=True, verbose_name='Lockup Image', upload_to='uploads/')
@@ -79,7 +104,6 @@ class PublishedExhibitManager(models.Manager):
         else:
             return super(PublishedExhibitManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class Exhibit(models.Model):
     title = models.CharField(max_length=512)
     slug = models.SlugField(max_length=255, unique=True)
@@ -134,46 +158,43 @@ class Exhibit(models.Model):
     def get_absolute_url(self):
         return reverse('exhibits:exhibitView', kwargs={'exhibit_id': self.id, 'exhibit_slug': self.slug})
 
-    def exhibit_lockup(self):
+    def exhibit_lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/273x182/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/273x182/" + self.lockup_derivative.name
         elif self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/273x182/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/273x182/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+                return get_thumbnail_url(index) + "crop/273x182/" + reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/273x182/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/273x182/" + self.hero.name
             else:
                 return None
 
-    def exhibit_lockup_sm(self):
+    def exhibit_lockup_sm(self, index):
         if self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     push_to_s3 = ['hero', 'lockup_derivative', 'alternate_lockup_derivative']
     def save(self, *args, **kwargs):
@@ -200,7 +221,6 @@ class PublishedHistoricalEssayManager(models.Manager):
         else:
             return super(PublishedHistoricalEssayManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class HistoricalEssay(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=255, unique=True)
@@ -263,31 +283,29 @@ class HistoricalEssay(models.Model):
                     super(HistoricalEssay, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-    def lockup(self):
+    def lockup(self, index):
         if self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/298x121/" + self.hero.name
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     def __str__(self):
         return self.title
@@ -300,7 +318,6 @@ class PublishedLessonPlanManager(models.Manager):
         else:
             return super(PublishedLessonPlanManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class LessonPlan(models.Model):
     title = models.CharField(max_length=200)
     sub_title = models.CharField(max_length=512, blank=True)
@@ -344,25 +361,23 @@ class LessonPlan(models.Model):
     def get_absolute_url(self):
         return reverse('for-teachers:lessonPlanView', kwargs={'lesson_id': self.id, 'lesson_slug': self.slug})
 
-    def lockup(self):
+    def lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/298x121/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/298x121/" + self.lockup_derivative.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/298x121/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "crop/298x121/" +  reference_image_md5
             else:
                 return None
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.lockup_derivative.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             else:
                 return None
 
@@ -391,7 +406,6 @@ class PublishedThemeManager(models.Manager):
         else:
             return super(PublishedThemeManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class Theme(models.Model):
     title = models.CharField(max_length=200)
     sort_title = models.CharField(blank=True, max_length=200, verbose_name='Sortable Title')
@@ -448,18 +462,17 @@ class Theme(models.Model):
     def get_absolute_url(self):
         return reverse('exhibits:themeView', kwargs={'theme_id': self.id, 'theme_slug': self.slug})
 
-    def theme_lockup(self):
+    def theme_lockup(self, index):
         if self.lockup_derivative:
-            return settings.THUMBNAIL_URL + "crop/420x210/" + self.lockup_derivative.name
+            return get_thumbnail_url(index) + "crop/420x210/" + self.lockup_derivative.name
         elif self.hero_first:
-            return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
+            return get_thumbnail_url(index) + "crop/420x210/" + self.hero.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/420x210/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "crop/420x210/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "crop/420x210/" + self.hero.name
+                return get_thumbnail_url(index) + "crop/420x210/" + self.hero.name
             else:
                 return None
 
@@ -480,18 +493,17 @@ class Theme(models.Model):
                     super(Theme, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-    def social_media_card(self):
+    def social_media_card(self, index):
         if self.item_id:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "clip/999x999/" +  reference_image_md5
             elif self.hero:
-                return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+                return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
             else:
                 return None
         else:
-            return settings.THUMBNAIL_URL + "clip/999x999/" + self.hero.name
+            return get_thumbnail_url(index) + "clip/999x999/" + self.hero.name
 
     def __str__(self):
         return self.title
@@ -503,7 +515,6 @@ class PublishedExhibitItemManager(models.Manager):
         else:
             return super(PublishedExhibitItemManager, self).get_queryset().filter(publish=True)
 
-@python_2_unicode_compatible
 class ExhibitItem(models.Model):
     item_id = models.CharField(max_length=200)
 
@@ -540,11 +551,16 @@ class ExhibitItem(models.Model):
     def __str__(self):
         return self.item_id
 
-    def solrData(self):
+    def indexedData(self, index):
         item_id_search_term = 'id:"{0}"'.format(self.item_id)
-        item_solr_search = SOLR_select(q=item_id_search_term)
-        if len(item_solr_search.results) > 0:
-            item = item_solr_search.results[0]
+        item_search = None
+        if index == 'solr':
+            item_search = SOLR_get(q=item_id_search_term)
+        elif index == 'es':
+            item_search = es_get(self.item_id)
+
+        if item_search:
+            item = item_search.item
 
             item['parsed_collection_data'] = []
             item['parsed_repository_data'] = []
@@ -558,14 +574,13 @@ class ExhibitItem(models.Model):
         else:
             return None
 
-    def imgUrl(self):
+    def imgUrl(self, index):
         if self.custom_crop:
-            return settings.THUMBNAIL_URL + "crop/210x210/" + self.custom_crop.name
+            return get_thumbnail_url(index) + "crop/210x210/" + self.custom_crop.name
         else:
-            item_id_search_term = 'id:"{0}"'.format(self.item_id)
-            item_solr_search = SOLR_select(q=item_id_search_term)
-            if len(item_solr_search.results) > 0 and 'reference_image_md5' in item_solr_search.results[0]:
-                return settings.THUMBNAIL_URL + "crop/210x210/" + item_solr_search.results[0]['reference_image_md5']
+            reference_image_md5 = get_reference_image_md5(self.item_id, index)
+            if reference_image_md5:
+               return get_thumbnail_url(index) + "crop/210x210/" +  reference_image_md5
             else:
                 return None
 
@@ -586,7 +601,6 @@ class ExhibitItem(models.Model):
                     super(ExhibitItem, self).save(update_fields=[s3field])
                     self._meta.get_field(s3field).upload_to = upload_to
 
-@python_2_unicode_compatible
 class NotesItem(models.Model):
     title = models.CharField(max_length=200)
     exhibit = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
@@ -621,7 +635,6 @@ class LessonPlanExhibit(models.Model):
         ordering = ['order']
 
 # Exhibits ordered within Themes
-@python_2_unicode_compatible
 class ExhibitTheme(models.Model):
     exhibit = models.ForeignKey(Exhibit, on_delete=models.CASCADE)
     theme = models.ForeignKey(Theme, on_delete=models.CASCADE)

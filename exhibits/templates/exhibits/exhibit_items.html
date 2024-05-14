@@ -1,6 +1,7 @@
+{% load lockups %}
 <div class="row primarysource">
   {% for item in exhibitItems %}
-    {% with item.solrData as exhibitItemData %}
+    {% indexed_data item request.session.index as exhibitItemData %}
     <div class="col-xs-6 col-sm-3 col-md-2">
         <a class="primarysource__link js-exhibit-item" href="{% url url_name url_id item.item_id %}" title="{% if exhibitItemData %}{{ exhibitItemData.title.0 }}{% else %}{{ item.custom_title }}{% endif %}">
 
@@ -46,13 +47,12 @@
             {% elif item.custom_title %}
               {{ item.custom_title }}
             {% else %}
-              {{ item.item_id }} not in Calisphere solr index
+              {{ item.item_id }} not in Calisphere search index
             {% endif %}
           </div>
         </div>
         </a>
     </div>
-    {% endwith %}
     {% if forloop.counter == 12 %}
       <div class="js-exhibit-items-overflow hidden-content" style="width: 100%;">
     {% endif %}
