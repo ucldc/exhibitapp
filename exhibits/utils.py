@@ -11,6 +11,29 @@ from django.conf import settings
 from functools import wraps
 from django.views.decorators.cache import cache_page
 
+# index schema fields that are of type=keyword so we can get
+# facets directly without needing an _ss or .raw suffix
+UCLDC_SCHEMA_TERM_FIELDS = [
+    'calisphere-id',
+    'id',
+    'campus_name',
+    'campus_data',
+    'campus_url',
+    'campus_id',
+    'collection_name',
+    'collection_data',
+    'collection_url',
+    'collection_id',
+    'sort_collection_data',
+    'repository_name',
+    'repository_data',
+    'repository_url',
+    'repository_id',
+    'rights_uri',
+    'url_item',
+    'fetcher_type',
+    'mapper_type'
+]
 
 # create a hash for a cache key
 def kwargs_md5(**kwargs):
