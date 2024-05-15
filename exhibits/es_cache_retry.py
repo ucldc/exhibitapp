@@ -1,20 +1,22 @@
 """ logic for cache / retry for es (opensearch) and JSON from registry
 """
 
-from django.core.cache import cache
-from django.conf import settings
+import json
+import urllib3
 
 from collections import namedtuple
-from urllib.parse import urlparse
-import urllib3
-import json
 from typing import Dict, List, Tuple, Optional
+from urllib.parse import urlparse
+
 from aws_xray_sdk.core import patch
+from django.core.cache import cache
+from django.conf import settings
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError as ESConnectionError
 from elasticsearch.exceptions import RequestError as ESRequestError
+from retrying import retry
 
-from exhibits.utils import kwargs_md5
+from exhibits.utils import kwargs_md5, UCLDC_SCHEMA_TERM_FIELDS
 
 urllib3.disable_warnings()
 
@@ -32,6 +34,37 @@ ESItem = namedtuple(
     'ESItem', 'found, item, resp')
 
 
+def shim_record(metadata):
+    # TODO replace type_ss with type globally
+    metadata['type_ss'] = metadata.get('type')
+    metadata['collection_ids'] = metadata.get('collection_url')
+    metadata['repository_ids'] = metadata.get('repository_url')
+
+    thumbnail_key = get_thumbnail_key(metadata)
+    if thumbnail_key:
+        metadata['reference_image_md5'] = thumbnail_key
+
+    media_key = get_media_key(metadata)
+    if media_key:
+        metadata['media']['media_key'] = media_key
+
+    if metadata.get('children'):
+        children = metadata.pop('children')
+        updated_children = []
+        for child in children:
+            thumbnail_key = get_thumbnail_key(child)
+            if thumbnail_key:
+                child['thumbnail_key'] = thumbnail_key
+            media_key = get_media_key(child)
+            if media_key:
+                child['media']['media_key'] = media_key
+            updated_children.append(child)
+        metadata['children'] = updated_children
+
+    return metadata
+
+
+@retry(stop_max_delay=3000)  # milliseconds
 def es_search(body) -> ESResults:
     cache_key = f"es_search_{kwargs_md5(**body)}"
     cached_results = cache.get(cache_key)
@@ -59,30 +92,7 @@ def es_search(body) -> ESResults:
         facet_counts = {}
 
     for result in results['hits']['hits']:
-        metadata = result.pop('_source')
-        # TODO replace type_ss with type globally
-        metadata['type_ss'] = metadata.get('type')
-        thumbnail_key = get_thumbnail_key(metadata)
-        if thumbnail_key:
-            metadata['reference_image_md5'] = thumbnail_key
-
-        media_key = get_media_key(metadata)
-        if media_key:
-            metadata['media']['media_key'] = media_key
-
-        if metadata.get('children'):
-            children = metadata.pop('children')
-            updated_children = []
-            for child in children:
-                thumbnail_key = get_thumbnail_key(child)
-                if thumbnail_key:
-                    child['thumbnail_key'] = thumbnail_key
-                media_key = get_media_key(child)
-                if media_key:
-                    child['media']['media_key'] = media_key
-                updated_children.append(child)
-            metadata['children'] = updated_children
-
+        metadata = shim_record(result.pop('_source'))
         result.update(metadata)
 
     results = ESResults(
@@ -115,6 +125,7 @@ def get_media_key(metadata):
 #     return es_search(kwargs)
 
 
+@retry(stop_max_delay=3000)  # milliseconds
 def es_get(item_id: str) -> Optional[ESItem]:
     # cannot search Elasticsearch with empty string
     if not item_id:
@@ -140,29 +151,7 @@ def es_get(item_id: str) -> Optional[ESItem]:
     found = item_search['hits']['total']['value']
     if not found:
         return None
-    item = item_search['hits']['hits'][0]['_source']
-
-    item['collection_ids'] = item.get('collection_url')
-    item['repository_ids'] = item.get('repository_url')
-    thumbnail_key = get_thumbnail_key(item)
-    if thumbnail_key:
-        item['reference_image_md5'] = thumbnail_key
-    media_key = get_media_key(item)
-    if media_key:
-        item['media']['media_key'] = media_key
-
-    if item.get('children'):
-        children = item.pop('children')
-        updated_children = []
-        for child in children:
-            thumbnail_key = get_thumbnail_key(child)
-            if thumbnail_key:
-                child['thumbnail_key'] = thumbnail_key
-            media_key = get_media_key(child)
-            if media_key:
-                child['media']['media_key'] = media_key
-            updated_children.append(child)
-        item['children'] = updated_children
+    item = shim_record(item_search['hits']['hits'][0]['_source'])
 
     results = ESItem(found, item, item_search)
     cache.set(cache_key, results, settings.DJANGO_CACHE_TIMEOUT)  # seconds
@@ -180,9 +169,9 @@ def es_mlt(item_id):
         "query": {
             "more_like_this": {
                 "fields": [
-                    "title.keyword",
+                    "title.raw",
                     "collection_data",
-                    "subject.keyword",
+                    "subject.raw",
                 ],
                 "like": [
                     {"_id": item_id}
@@ -255,14 +244,12 @@ def query_encode(query_string: str = None,
                 es_params['query'] = es_filters[0]
 
     if facets:
-        # exceptions = ['collection_url', 'repository_url', 'campus_url']
-        exceptions = []
         aggs = {}
         for facet in facets:
-            if facet in exceptions or facet[-8:] == '.keyword':
+            if facet in UCLDC_SCHEMA_TERM_FIELDS or facet[-4:] == '.raw':
                 field = facet
             else:
-                field = f'{facet}.keyword'
+                field = f'{facet}.raw'
 
             aggs[facet] = {
                 "terms": {
@@ -297,6 +284,8 @@ def query_encode(query_string: str = None,
     es_params.update({'size': rows})
     if start:
         es_params.update({'from': start})
+
+    es_params.update({'track_total_hits': True})
     return es_params
 
 
