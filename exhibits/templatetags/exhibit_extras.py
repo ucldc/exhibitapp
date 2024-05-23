@@ -45,6 +45,8 @@ def clip_height(dimensions, clip):
 
 
 def get_dimensions(text, delimiter):
+    if isinstance(text, list):
+        return text[0], text[1]
     dimensions = [int(dimension.strip()) for dimension in text.split(delimiter)]
     x = dimensions[0]
     y = dimensions[1] 
