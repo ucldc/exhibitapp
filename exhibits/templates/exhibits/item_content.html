@@ -47,6 +47,8 @@
             <div class="obj__tile-icon fa-file-text-o"></div>
             {% elif item.type_ss.0|lower == "dataset" %}
             <div class="obj__tile-icon fa-bar-chart"></div>
+            {% else %}
+            <div class="obj__tile-icon fa-file"></div>
             {% endif %}
           </div>
         {% endif %}

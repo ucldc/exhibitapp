@@ -43,6 +43,8 @@ def shim_record(metadata):
     thumbnail_key = get_thumbnail_key(metadata)
     if thumbnail_key:
         metadata['reference_image_md5'] = thumbnail_key
+        metadata['reference_image_dimensions'] = (
+            metadata.get('thumbnail', {}).get('dimensions'))
 
     media_key = get_media_key(metadata)
     if media_key:
@@ -159,7 +161,7 @@ def es_get(item_id: str) -> Optional[ESItem]:
 
 
 def es_get_ids(ids: List[str]) -> ESResults:
-    body = {'query': {'ids': {'values': ids}}}
+    body = {'query': {'ids': {'values': ids}}, 'size': len(ids)}
     return es_search(body)
 
 
@@ -211,7 +213,8 @@ def query_encode(query_string: str = None,
     if query_string:
         es_query = [{
             "query_string": {
-                "query": query_string
+                "query": query_string,
+                "analyzer": "english"
             }
         }]
 
@@ -274,12 +277,16 @@ def query_encode(query_string: str = None,
             i = result_fields.index('type_ss')
             result_fields[i] = 'type'
 
-    # if sort:
-    #     es_params.update({
-    #         "sort": [{
-    #             sort[0]: {"order": sort[1]}
-    #         }]
-    #     })
+    if sort:
+        if sort[0] == 'score':
+            sort_by = '_score'
+        else:
+            sort_by = sort[0]
+        es_params.update({
+            "sort": [{
+            sort_by: {"order": sort[1]}
+        }]
+    })
     
     es_params.update({'size': rows})
     if start:
