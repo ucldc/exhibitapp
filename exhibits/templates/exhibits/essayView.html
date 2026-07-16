@@ -12,7 +12,7 @@
 {% block content %}
   <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
     <ul>
-      <li><a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a></li>
+      <li><a href="{% url 'exhibits:randomExplore' %}">Exhibitions</a></li>
     </ul>
   </nav>
   
@@ -42,7 +42,7 @@
           <div class="essay__note">
             <h3>Related exhibitions</h3>
             {% for hee in essay.published_exhibits.all %}
-              <a href="{{ hee.exhibit.get_absolute_url }}" data-pjax="js-pageContent">{{ hee.exhibit }}</a><br/>
+              <a href="{{ hee.exhibit.get_absolute_url }}">{{ hee.exhibit }}</a><br/>
             {% endfor %}
           </div>
         {% endif %}
@@ -50,7 +50,7 @@
           <div class="essay__note">
             <h3>Related themes</h3>
             {% for het in essay.published_themes.all %}
-              <a href="{{ het.theme.get_absolute_url }}" data-pjax="js-pageContent">{{ het.theme }}</a><br/>
+              <a href="{{ het.theme.get_absolute_url }}">{{ het.theme }}</a><br/>
             {% endfor %}
           </div>
         {% endif %}

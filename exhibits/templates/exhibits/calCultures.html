@@ -11,7 +11,7 @@
 {% block content %}
   <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
     <ul>
-      <li><a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a></li>
+      <li><a href="{% url 'exhibits:randomExplore' %}">Exhibitions</a></li>
     </ul>
   </nav>
   <div class="theme__hero" style="background-image: url('https://calisphere.org/calisphere_images/cal_cultures_hero.jpg')">
@@ -30,7 +30,7 @@
       <div class="row">
         {% for theme in california_cultures %}
           <div class="col-sm-4 col-xs-6">
-            <a href="{{ theme.get_absolute_url }}" data-pjax="js-pageContent">
+            <a href="{{ theme.get_absolute_url }}">
               <div class="exhibit__lockup--med">
                 <div class="exhibit__lockup--med-image">
                   <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% theme_lockup theme request.session.index %}');">

@@ -18,7 +18,7 @@
     {% for type, entry in set %}
       {% if type == 'exhibit' %}
         <div class="js-grid-item">
-          <a href="{{ entry.get_absolute_url }}" data-pjax="js-pageContent">
+          <a href="{{ entry.get_absolute_url }}">
             <div class="exhibit__lockup--med">
               <div class="exhibit__lockup--med-image">
                 <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup entry request.session.index %}');">
@@ -32,7 +32,7 @@
         </div>
       {% else %}
         <div class="js-grid-item grid-item-width2">
-          <a href="{{ entry.get_absolute_url }}" data-pjax="js-pageContent">
+          <a href="{{ entry.get_absolute_url }}">
             <div class="theme__lockup--horizontal">
               <div class="theme__lockup--horizontal-image">
                 <div class="aspect-ratio-content theme__lockup--horizontal-image-content" style="background-image: url('{% theme_lockup entry request.session.index %}');">
