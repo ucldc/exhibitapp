@@ -23,7 +23,7 @@
   {% if item %}
     <div class="exhibit__modal-content">
       <div class="obj-container__simple-{% if 'reference_image_md5' in item %}image{% else %}tile{% endif %}">
-        <a class="obj__link" href="{% if not active_tab %}{% url 'calisphere:itemView' item.id %}{% endif %}" data-pjax="js-pageContent">
+        <a class="obj__link" href="{% if not active_tab %}{% url 'calisphere:itemView' item.id %}{% endif %}">
         {% if item.reference_image_md5 %}
           <div class="obj__icon-container">
             <img class="obj__simple-image" src="{{ thumbnailUrl }}clip/{{ clipto }}/{{ item.reference_image_md5 }}" alt="{{ item.title.0 }}" style="width: {{ item.reference_image_dimensions|clip_width:clipto }}px;height: {{ item.reference_image_dimensions|clip_height:clipto }}px;max-width: 100%">
@@ -101,7 +101,6 @@
               {% for repository in item.parsed_repository_data %}
                 <a
                   href="{% if not active_tab %}{% url 'calisphere:repositoryCollections' repository.id %}{% endif %}"
-                  data-pjax="js-pageContent"
                   data-ga-code="{{ repository.ga_code }}"
                   data-ga-dim2="{{ repository.slug }}"
                 >
@@ -118,7 +117,6 @@
               <dd class="meta-block__defin">{% for collection in item.parsed_collection_data %}
                 <a
                   href="{% if not active_tab %}{% url 'calisphere:collectionView' collection.id %}{% endif %}"
-                  data-pjax="js-pageContent"
                   class="js-relatedCollection"
                   data-ga-dim1="{{ collection.local_id }}{{ collection.slug }}"
                 >{{ collection.name }}</a> {% endfor %}</dd>

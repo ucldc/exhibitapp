@@ -13,9 +13,9 @@
   <!-- Dynamically add class 'button__secondary' to <a> elements below for selected state -->
 
   <div class="exhibitDirectory__button-container">
-    <a class="btn btn-default exhibitDirectory__button {% if active == 'random' %}button__secondary{% endif %}" href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Random Explore</a>
-    <a class="btn btn-default exhibitDirectory__button {% if active == 'a-z' %}button__secondary{% endif %}" href="{% url 'exhibits:exhibitDirectory' 'all' %}" data-pjax="js-pageContent">Browse All</a>
-    <a class="btn btn-default exhibitDirectory__button {% if active == 'search' %}button__secondary{% endif %}" href="{% url 'exhibits:exhibitSearch' %}" data-pjax="js-pageContent">Title Search</a>
+    <a class="btn btn-default exhibitDirectory__button {% if active == 'random' %}button__secondary{% endif %}" href="{% url 'exhibits:randomExplore' %}">Random Explore</a>
+    <a class="btn btn-default exhibitDirectory__button {% if active == 'a-z' %}button__secondary{% endif %}" href="{% url 'exhibits:exhibitDirectory' 'all' %}">Browse All</a>
+    <a class="btn btn-default exhibitDirectory__button {% if active == 'search' %}button__secondary{% endif %}" href="{% url 'exhibits:exhibitSearch' %}">Title Search</a>
   </div>
 
   <hr/>

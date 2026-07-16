@@ -17,17 +17,17 @@
       <div class="col button__exhibitDirectory-tabs-container">
         <h2>Browse by theme:</h2>
         <a class="button__exhibitDirectory-tabs{% if selected == 'all' %}--selected{% endif %}"
-          href="{% url 'exhibits:exhibitDirectory' 'all' %}" data-pjax="js-pageContent">
+          href="{% url 'exhibits:exhibitDirectory' 'all' %}">
           All exhibitions
         </a>
         {% for category, display in categories %}
           <a class="button__exhibitDirectory-tabs{% if selected == category %}--selected{% endif %}"
-            href="{% url 'exhibits:exhibitDirectory' category %}" data-pjax="js-pageContent">
+            href="{% url 'exhibits:exhibitDirectory' category %}">
             {{ display }}
           </a>
         {% endfor %}
         <a class="button__exhibitDirectory-tabs{% if selected == 'uncategorized' %}--selected{% endif %}"
-          href="{% url 'exhibits:exhibitDirectory' 'uncategorized' %}" data-pjax="js-pageContent">
+          href="{% url 'exhibits:exhibitDirectory' 'uncategorized' %}">
           Uncategorized
         </a>
       </div>
@@ -37,12 +37,12 @@
   <div class="col-md-9 exhibitDirectory">
     {% for theme, exhibits in themes %}
       {% if theme != '' %}
-        <h2>{{ exhibits|length }} exhibition{{ exhibits|pluralize }} in <a href="{{ theme.get_absolute_url }}" data-pjax="js-pageContent">{{ theme.title }}</a></h2>
+        <h2>{{ exhibits|length }} exhibition{{ exhibits|pluralize }} in <a href="{{ theme.get_absolute_url }}">{{ theme.title }}</a></h2>
       {% endif %}
       <div class="row exhibitDirectory__exhibits">
         {% for exhibit in exhibits %}
           <div class="col-md-3 col-sm-4 col-xs-6">
-            <a href="{{ exhibit.get_absolute_url }}" data-pjax="js-pageContent">
+            <a href="{{ exhibit.get_absolute_url }}">
               <div class="exhibit__lockup--med">
                 <div class="exhibit__lockup--med-image">
                   <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup exhibit request.session.index %}');">
@@ -57,7 +57,7 @@
         {% endfor %}
         {% if theme != '' %}
           <div class="col-md-6 col-sm-8 col-xs-12">
-            <a href="{{ theme.get_absolute_url }}" data-pjax="js-pageContent">
+            <a href="{{ theme.get_absolute_url }}">
               <div class="theme__lockup--horizontal">
                 <div class="theme__lockup--horizontal-image">
                   <div class="aspect-ratio-content theme__lockup--horizontal-image-content" style="background-image: url('{% theme_lockup theme request.session.index %}');">

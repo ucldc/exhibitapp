@@ -29,7 +29,7 @@
 <div class="row exhibitDirectory__exhibits">
   {% for exhibit in exhibits %}
     <div class="col-md-5ths col-sm-4 col-xs-6">
-      <a href="{{ exhibit.get_absolute_url }}" data-pjax="js-pageContent">
+      <a href="{{ exhibit.get_absolute_url }}">
         <div class="exhibit__lockup--med">
           <div class="exhibit__lockup--med-image">
             <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup exhibit request.session.index %}');">
