@@ -15,6 +15,8 @@ def exhibit_lockup_sm(exhibit, *args):
 @register.simple_tag
 # Exhibit, HistoricalEssay, LessonPlan, Theme
 def social_media_card(obj, *args):
+    if not obj or not hasattr(obj, 'social_media_card'):
+        return None
     return obj.social_media_card(*args)
 
 @register.simple_tag
