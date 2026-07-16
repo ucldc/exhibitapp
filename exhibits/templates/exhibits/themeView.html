@@ -12,7 +12,7 @@
 {% block content %}
   <nav class="breadcrumb--style1" aria-label="breadcrumb navigation">
     <ul>
-      <li><a href="{% url 'exhibits:randomExplore' %}" data-pjax="js-pageContent">Exhibitions</a></li>
+      <li><a href="{% url 'exhibits:randomExplore' %}">Exhibitions</a></li>
     </ul>
   </nav>
   <div class="theme__hero" style="background-image: url('{{ thumbnailUrl }}clip/1400x280/{{ theme.hero }}')">
@@ -32,7 +32,7 @@
       <div class="row">
         {% for exhibittheme in relatedExhibits %}
           <div class="col-sm-4 col-xs-6">
-            <a href="{{ exhibittheme.exhibit.get_absolute_url }}" data-pjax="js-pageContent">
+            <a href="{{ exhibittheme.exhibit.get_absolute_url }}">
               <div class="exhibit__lockup--med">
                 <div class="exhibit__lockup--med-image">
                   <div class="aspect-ratio-content exhibit__lockup--med-image-content" style="background-image: url('{% exhibit_lockup exhibittheme.exhibit request.session.index %}');">
@@ -55,7 +55,7 @@
     <div class="row js-related-carousel exhibit__related-carousel">
       {% for het in theme.published_essays.all %}
         <div class="col-xs-2 col-md-3">
-          <a href="{{ het.historicalEssay.get_absolute_url }}" data-pjax="js-pageContent">
+          <a href="{{ het.historicalEssay.get_absolute_url }}">
             <div class="exhibit__essay-lockup">
               <div class="aspect-ratio-content exhibit__essay-lockup-image" style="background-image: url({% lockup_image het.historicalEssay request.session.index %});">
                 <div class="exhibit__essay-lockup-color"></div>
@@ -73,7 +73,7 @@
     <div class="row js-related-carousel exhibit__related-carousel">
       {% for lpt in theme.published_lessons.all %}
         <div class="col-xs-2 col-md-3">
-          <a href="{{ lpt.lessonPlan.get_absolute_url }}" data-pjax="js-pageContent">
+          <a href="{{ lpt.lessonPlan.get_absolute_url }}">
             <div class="exhibit__lesson-lockup">
               <div class="aspect-ratio-content exhibit__lesson-lockup-image" style="background-image: url({% lockup_image lpt.lessonPlan request.session.index %});">
                 <div class="exhibit__lesson-lockup-color"></div>
